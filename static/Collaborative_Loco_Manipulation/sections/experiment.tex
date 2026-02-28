@@ -1,0 +1,109 @@
+\section{Results}
+\label{sec:experiment}
+\subsection{Experimental Setup}
+Unless otherwise specified, we use at most 2 ADMM iterations and 1 SQP iteration per MPC solve. The rationale is discussed in Sec.~\ref{subsec:scalability_convergence}. We refer to different iteration limits as ADMM-SQP configurations. The consensus constraint tolerance is set to $5 \times 10^{-3}$. All experiments are conducted on Unitree B1-Z1 via an Intel Core i7-14650HX CPU. The implementation is majorly built upon OCS2 \cite{OCS2}.
+
+We evaluate two aspects of the proposed framework. To assess scalability and computational efficiency, experiments are conducted in a non-physical simulator similar to \cite{devincenti2023} by rolling out the system dynamics in (\ref{eq:raw_payload_dynamics}) and (\ref{eq:raw_robot_dynamics}) using only the first-step MPC optimized inputs. The full-body motions are realized through IK without WBC, allowing us to isolate trajectory quality and MPC solving time from tracking errors or lower-level controller effects. To evaluate tracking performance, experiments are performed in a high-fidelity physical simulator with Gazebo physics engine and rendered in Blender. The MPC and WBC run asynchronously to emulate realistic multi-rate interactions between planning and control. For the payload, we use a cargo of length $1\,\mathrm{m}$ in all dimensions with homogeneous density.
+
+% \subsection{Reference Tracking}
+
+\subsection{Rough Terrain}
+Figure~\ref{fig:perceptive_terrain_scenarios} summarizes results across rough terrain scenarios. In the Gap case (A.1–A.2), the two-robot team clears stepped terrain with adaptive swing heights while maintaining stable payload transport. In the Slope case (B.1–B.2), the system traverses a $10^\circ$ incline with base and cargo orientation compensating for terrain tilt. The Narrow Turn scenario (C) presents the most constrained configuration, requiring coordinated replanning as the team redirects the payload through a $90 \degree$ turn within a narrow passage. The annular platform scenario (D) demonstrates stable formation tracking under continuous curvature on an elevated circular path.
+% Figure~\ref{fig:perceptive_terrain_scenarios} summarizes the quantitative results across all rough terrain scenarios. In the Gap scenario (A.1 and A.2), the two-robot configuration successfully navigates the stepped terrain while maintaining stable payload transport, with the perceptive reference manager adapting swing heights to clear each step. The Slope scenario (B.1 and B.2) demonstrates the two-robot system reliably traverses the $10 \degree$ incline, with the base height trajectory adapting to the terrain gradient and the cargo pitch reference compensating for the surface tilt. The Narrow Turn scenario (C) presents the most constrained configuration, requiring coordinated replanning as the team redirects the payload through a $90 \degree$ turn within a narrow passage. The annular platform scenario (D) further validates the framework under continuous curvature commands, where robots maintain formation while following a circular reference path on the elevated surface.
+
+% For the scalability evaluation, extending the Gap scenario to three robots (E) and the Slope scenario to four robots (F) yields stable transport performance, demonstrating that the proposed ADMM-based coordination scales effectively with team size without significant degradation in trajectory quality or MPC solve time. 
+
+% Across all rough terrain scenarios, the framework maintains stable footing by confining foot placements within valid planar regions and adapting swing trajectories to terrain height variations, validating the effectiveness of the perceptive terrain mode described in Sec.~\ref{sec:approach}.
+
+\subsection{Scalability and Convergence Analysis}\label{subsec:scalability_convergence}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/scalability_analysis.png}
+    \vspace{-5.0mm}
+    \caption{CPU time scalability comparison between distributed and centralized MPC for 2–4 robots in flat and Gap-Slope terrain scenarios. The red dashed line indicates the 30 Hz real-time threshold.}
+    \label{fig:scalability_analysis}
+    \vspace{-5.0mm}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/mpc_residuals_multi_trial.png}
+    \vspace{-2.0mm}
+    \caption{Residual convergence (top-left, top-right, and bottom-left) and computation time (bottom-right) for different ADMM-SQP configurations.}
+    \label{fig:convergence_analysis}
+    \vspace{-4.0mm}
+\end{figure}
+
+We use the flat and Gap-Slope (Fig.~\ref{fig:perceptive_terrain_scenarios}-E and F) terrain scenarios as benchmarks for scalability tests between distributed and centralized MPC. The results, shown in Fig. \ref{fig:scalability_analysis}, show computational advantages for distributed MPC that increase with team size. In flat terrain, distributed MPC achieves $3.6 \times$, $7.1 \times$, and $11.4 \times$ speedups for 2, 3, and 4 robots, with median CPU times of $6.73$ ms to $11.63$ ms compared to centralized MPC's $24.38$ ms to $133.13$ ms. In Gap-Slope terrain with perceptive constraints, distributed MPC achieves $1.7 \times$, $5.0 \times$, and $7.3 \times$ speedups with median times of $18.01$ ms, $16.39$ ms, and $23.03$ ms.
+% , while centralized MPC reaches 167.95 ms for 4 robots—exceeding a minimally real-time 30 Hz threshold by more than 5×. 
+Distributed MPC remains 50 Hz (100 Hz on flat terrain) for all team sizes, whereas centralized MPC is below 30 Hz for 3 and 4 robots. The largest runtime outliers occur during the initial solve due to perception initialization and cold starts.
+% , and do not reflect steady-state performance.
+The superior scalability of distributed MPC stems from decomposing the multi-robot optimization into smaller, parallelizable subproblems, resulting in nearly uniform computational time across team sizes with minimal overhead from perceptive-related updates and processing, whereas centralized MPC must solve a single, exponentially growing problem that becomes computationally prohibitive as team size increases.
+
+To evaluate ADMM convergence and warm-start effects, we ran 60 trials on a Gap terrain (Fig.~\ref{fig:perceptive_terrain_scenarios}-E) with different ADMM-SQP configurations. Each trial used a waypoint sent across the gap with random offsets of $\pm 1$ m in x-y and $\pm 90\degree$ in yaw. As shown in Fig. \ref{fig:convergence_analysis}, with 1 ADMM iteration, the residual drops more slowly initially than with more iterations, and deviation increases, especially in the gap phase, where the consensus residual becomes unsuppressed. More SQP iterations slightly reduce large constraint violations. With 2 ADMM iterations, the residual stays within the threshold with rare violations; 5 iterations improve further. To capture computational differences, we recorded computation time for the first 0.5 s after MPC starts, since the initial steps must quickly reduce the residual for consensus and the solver starts from scratch. 
+Results show that, under the same SQP iteration, more ADMM iterations converge faster initially but are more expensive and show sparser time distributions, as more ADMM iterations are needed to converge, slowing the process initially. More SQP iterations substantially increase computation time under the same ADMM iteration. Therefore, we chose 2 ADMM iterations and 1 SQP iteration to balance constraint satisfaction and computational efficiency.
+
+\subsection{Obstacle Avoidance}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/obstacle_overview.png}
+    \vspace{-5.0mm}
+    \caption{Obstacle avoidance and pose tracking performance. 
+    % The robots follow the optimized collision-free trajectory from start to goal. Tracking errors are shown over a representative 10\,s segment of the full 110\,s task, with maximum linear and angular errors of 0.0183\,m and 1.644$^\circ$, respectively.
+    }
+    \label{fig:obstacle_avoidance_overview}
+    \vspace{-5.0mm}
+\end{figure}
+
+To evaluate the obstacle avoidance capability of the proposed MPC framework, a scenario was constructed in a physical simulator as shown in Fig.~\ref{fig:perceptive_terrain_scenarios}-G and Fig.~\ref{fig:obstacle_avoidance_overview}. 
+% The robot--cargo system starts from an initial position on the left and navigates through multiple box-shaped obstacles to reach a given goal position on the right. Each box obstacle is represented as a spherical region with radius slightly larger than the box size. 
+The left portion of Fig.~\ref{fig:obstacle_avoidance_overview} illustrates the resulting trajectory, showing that the robot--cargo system safely traverses all obstacles. 
+With only a simple start-to-goal interpolation as reference, the MPC automatically finds a feasible trajectory that turns and leverages manipulator flexibility to pass narrow passages while remaining close to the reference. 
+The right portion of Fig. \ref{fig:obstacle_avoidance_overview} shows the pose tracking error over a representative $10$~s segment of the full $110$~s duration, obtained from integrated MPC-WBC. 
+% The linear tracking error is computed as the Euclidean norm of the position error, while the angular error is computed using the logarithmic map on $\mathrm{SO}(3)$. 
+The maximum linear error is $0.0183$~m, and the maximum angular error is $1.644^\circ$. Periodic spikes in the error correspond to ground impact events during trotting, which introduce transient disturbances but remain bounded. These results demonstrate that the proposed MPC--WBC framework achieves reliable real-time obstacle avoidance while maintaining accurate pose tracking.
+
+\subsection{Robustness and Ablation Study}
+% Robustness to cargo mass variation and model uncertainty is a critical performance metric for the proposed controller. 
+To evaluate robustness, the robot--cargo system was commanded to track a reference trajectory consisting of a $6.5\,\mathrm{m}$ translation with a simultaneous $90^\circ$ rotation in physical simulations. Multiple trials were performed under different nominal cargo masses as well as under deliberate mass and inertia modeling error. 
+As shown in Fig.~\ref{fig:robustness_analysis},
+despite rare transient peaks caused by foot--ground impacts, the median errors and interquartile ranges remain consistently low across different nominal masses and under both mass and inertia modeling error, demonstrating strong robustness of the proposed controller. The controller performance degrades to failure when modeling error is approximately $67\%$. 
+% Furthermore, the system exhibits greater robustness when the modeled mass or inertia is overestimated compared to underestimated cases, indicating that relatively aggressive parameter estimates provide additional stability margin. This behavior arises because the controller computes larger wrench commands under relatively aggressive estimates, enabling more effective compensation for tracking errors and external disturbances. This phenomenon highlights the effectiveness of explicit wrench computation and tracking within integrated MPC and WBC framework, compared to approaches that rely solely on position-level tracking without explicitly accounting for force consistency.
+
+\begin{figure}[h]
+    \vspace{-3.0mm}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/robustness.png}
+    \vspace{-2.0mm}
+    \caption{Cargo pose tracking errors under mass and inertia variations. 
+    % Box plots show the distribution of position and orientation tracking errors for different nominal masses and parameter perturbations.
+    }
+    \label{fig:robustness_analysis}
+    \vspace{-2.0mm}
+\end{figure}
+
+Another important feature of our framework is that we optimize and track the full wrench including both force and torque at the grasped handles. As an ablation study, when torque is completely disabled, the angular tracking error increases over time and eventually leads to instability, demonstrating the limitation of force-only tracking. Enabling torque, particularly along the alignment axis between the robot and cargo (x-axis), significantly improves rotational stability and reduces angular error, the quantitive result is shown in Fig. \ref{fig:wrench_ablation}.
+% Torque about the z-axis is tightly constrained to prevent slipping at the gripper--handle interface. This anisotropic torque constraint enables stable and accurate tracking while maintaining safe contact interaction.
+\begin{figure}[h]
+    % \vspace{-2.0mm}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/wrench_ablation.png}
+    \vspace{-3.0mm}
+    \caption{Comparison between force-only tracking and full wrench tracking.
+    % Force-only tracking exhibits large angular error and eventually becomes unstable, while wrench tracking maintains stable behavior.
+    }
+    \label{fig:wrench_ablation}
+    \vspace{-4.0mm}
+\end{figure}
+
+% Benchmark metrics: 
+
+% For each ADMM/SQP iteration, set a minimum constraint violation; i.e., how does changing the constraint satisfaction affect the convergence or number of iterations needed? 
+
+% For different manual ADMM/SQP iteration setup, report the constraint satisfaction  
+
+% For verifying the WBC tracking performance. Simulation in gazebo for two-robott carrying task.
+
+% Based the task, we divide them into 1) Obstacle avoidance; 2) Narrow passage; 3) Slope.

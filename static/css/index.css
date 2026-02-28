@@ -107,6 +107,13 @@ body {
     height: 100%;
 }
 
+/* Video blocks in scenario sections */
+.hero .video-container video,
+.hero .column video {
+  max-width: 100%;
+  display: block;
+}
+
 .publication-body img {
 }
 

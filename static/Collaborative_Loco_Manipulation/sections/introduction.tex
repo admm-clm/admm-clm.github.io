@@ -1,0 +1,28 @@
+\section{Introduction}
+\label{sec:introduction}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.94\linewidth]{figures/flowchart.pdf}
+    \vspace{-1mm}
+    \caption{ADMM-based distributed MPC framework. The robot subproblems are solved in parallel with consensus on interaction wrenches, and the resulting trajectories are executed by local WBC.}
+    \label{fig:system_diagram}
+    \vspace{-5mm}
+\end{figure}
+
+Recent robotics research has increasingly focused on enhancing loco-manipulation capabilities, aiming to automate repetitive and labor-intensive tasks while preserving all-terrain mobility. Among these tasks, collaborative transportation of heavy and oversized loads via loco-manipulation has attracted significant attention due to their prevalence in logistics, mining, construction, agriculture, and search-and-rescue operations \cite{farivarnejad2022multirobot}. 
+Collaborative loco-manipulation, in which multiple legged robots equipped with manipulators cooperatively transport a shared load, offers a promising approach by distributing both the payload weight and the control effort across the robot team.
+
+To simplify coordination, many approaches adopt hierarchical frameworks that decouple payload and robot planning \cite{rigo2025hierarchical,yang2022}. While scalable, these designs often rely on quasi-static assumptions or neglect dynamic and kinematic coupling between robots and the payload, leading to conservative motions. For quadrupedal manipulators, where locomotion and manipulation forces are strongly coupled, ignoring these interactions can degrade performance and stability especially on rough terrains (see Fig.~\ref{fig:system_diagram}), motivating planning frameworks that explicitly model force and dynamic coupling.
+
+In contrast, centralized planning frameworks can naturally account for dynamic coupling and shared constraints among the robots and the payload by solving a unified optimal control problem (OCP) \cite{devincenti2023,sun2025agile}. However, this comes at the cost of significantly increased computational complexity. Compared to teams of wheeled mobile manipulators or quadrotors, cooperative quadruped manipulators present additional challenges due to high number of degrees of freedom (DoFs), hybrid contact dynamics, and rough terrain. As a result, the scalability of fully centralized planning with respect to the number of robots becomes a critical bottleneck, limiting its applicability for real-time replanning and control.
+
+In this work, we explicitly analyze the coupling structure between quadruped manipulators and a shared payload and leverage the Alternating Direction Method of Multipliers (ADMM) \cite{boyd2011distributed} to decompose the resulting multi-robot optimal control problem into tractable subproblems. Although the system exhibits strong coupling through the payload dynamics, each robot interacts directly only with the payload rather than with other robots. This star-shaped coupling structure enables parallel optimization across robots through carefully designed consensus constraints, allowing distributed computation while preserving the essential force and dynamic interactions induced by the shared load.
+
+We further adopt a real-time, receding-horizon implementation of the distributed planner within a model predictive control (MPC) framework. Notably, the solution from the previous MPC window provides an effective warm start for the current optimization, allowing the ADMM solver to converge to a satisfactory consensus with only a small number of ADMM iterations per planning cycle. At a higher control rate, a wrench-aware whole-body controller (WBC) tracks the planned end-effector poses, foot placements, and interaction wrenches, bridging distributed planning and execution. Although whole-body inverse dynamics is well studied \cite{bellicoso2019alma}, to our knowledge this is the first integrated distributed MPC–WBC pipeline that accounts for coupling effects in prehensile collaborative loco-manipulation with multiple legged manipulators in challenging environments.
+
+Our contributions can be summarized as follows:
+\begin{itemize}
+    \item We propose an ADMM-based distributed MPC framework that decomposes a tightly coupled optimal control problem involving multiple quadruped manipulators and a shared payload into tractable subproblems.
+    \item We fully integrate a wrench-aware WBC with the distributed MPC, which tracks the optimized motion and interaction trajectories, including end-effector poses, foot contacts, and manipulation wrench.
+    \item We evaluate teams of 2–4 robots on diverse collaborative transportation tasks, including obstacle avoidance and rough-terrain traversal, demonstrating real-time performance independent of team size (50 Hz with perceptive inputs and 100 Hz without) and robustness to model uncertainties.
+\end{itemize}

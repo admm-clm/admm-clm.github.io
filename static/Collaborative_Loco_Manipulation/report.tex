@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts
+
+\title{\LARGE \bf
+ADMM-Based Distributed Model Predictive Control for Collaborative Loco-Manipulation
+}
+
+
+% \author{Albert Author$^{1}$ and Bernard D. Researcher$^{2}$% <-this % stops a space
+% \thanks{*This work was not supported by any organization}% <-this % stops a space
+% \thanks{$^{1}$Albert Author is with Faculty of Electrical Engineering, Mathematics and Computer Science,
+%         University of Twente, 7500 AE Enschede, The Netherlands
+%         {\tt\small albert.author@papercept.net}}%
+% \thanks{$^{2}$Bernard D. Researcheris with the Department of Electrical Engineering, Wright State University,
+%         Dayton, OH 45435, USA
+%         {\tt\small b.d.researcher@ieee.org}}%
+% }
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{abstract}
+
+
+
+% \end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+% Background: The motivation of studying collaborative loco-manipulation transportation task. Check \cite{vincenti_centralized_2023} (and paper by Alberto Rigo).
+
+The motivation for studying collaborative loco-manipulation transportation tasks arises from the need to maximize transportation capabilities for heavy and oversized payloads. As highlighted in recent research \cite{pandit2024, fawcett2023}, the automation of heavy labor through collaborative, all-terrain mobile manipulators would significantly improve human work conditions in labor-intensive industries such as construction, mining, and search and rescue operations.
+
+Compared to wheeled robots, legged robots offer significant advantages in navigating complex terrains. However, they face inherent limitations in payload capacity and manipulation capabilities when operating individually \cite{kim2023}. For instance, a single quadrupedal robot typically has a maximum payload of 5-10 kg, which is insufficient for many industrial applications. Collaborative loco-manipulation, where multiple legged robots equipped with manipulators work together to transport shared loads, presents a promising solution to overcome these limitations by distributing the weight and control responsibilities \cite{rigo2025, turrisi2024}.
+
+For successful long-horizon multi-robot transportation, a hierarchical framework is necessary to manage the complexity of coordinating multiple robots while maintaining system stability and task performance. This requires careful consideration of the computation architecture and control strategy. The key technical challenges include the high dimensionality of the combined multi-robot system resulting in complex optimal control problems; the dynamic coupling between robots through the shared payload creating a tightly interdependent system; and the need for efficient trajectory optimization algorithms that can generate solutions quickly enough for real-time control, particularly when navigating uneven terrains while avoiding obstacles.
+
+In this paper, we propose an ADMM-Based Distributed Model Predictive Control framework that computationally decomposes the complex optimization problem while still executing on a centralized computing platform. Our methodology involves a hierarchical structure consisting of three main components:
+
+\begin{enumerate}
+    \item A Global Planner that generates collision-free paths for the object.
+    \item A Distributed Trajectory Planner based on ADMM principles that optimizes robot and object trajectories.
+    \item Whole-Body Controllers (WBC) for each robot that execute the optimized trajectories.
+\end{enumerate}
+
+While the Distributed Trajectory Planner is conceptually distributed, it runs on a central computer that receives state measurements from all robots, allowing for efficient information sharing and coordination. Despite the computational challenges associated with centralized methods, our framework employs a centralized planning approach for several reasons:
+
+\begin{enumerate}
+    \item Dynamic force distribution: Directly optimizes interaction forces between robots and the object, ensuring balanced load-sharing and stability.
+    \item Unified response to disturbances: Changes in the environment (e.g., moving obstacles, payload shifts) are handled holistically by replanning both object and robot trajectories.
+    \item No cascading delays: Hierarchical methods suffer from lag since robots must react after the object’s trajectory is updated.
+\end{enumerate}
+
+The remainder of this paper is organized as follows: Section \ref{sec:related_work} reviews related work in collaborative loco-manipulation, distributed MPC, and ADMM applications in robotics. Section \ref{sec:approach} presents our system model and problem formulation. Section \ref{sec:experiment} details the ADMM-based distributed MPC algorithm and presents simulation results comparing our approach to centralized methods. Finally, Section \ref{sec:conclusion} concludes with a discussion of limitations and future directions.
+
+% Our overall contribution:
+% \begin{itemize}
+%     \item We propose a hierarchical task and motion planning framework for performing collaborative multi-robot transportation in cluttered environments.
+%     \item We validate the framework in a high-fidelity Gazebo simulation environment.
+% \end{itemize}
+
+% Task 1: High-Level Decision Making:
+
+% To enable a complete collaborative object transportation process from scratch, we formulate a decision-making framework that selects high-level actions based on the current states of all robots. We also address potential failure modes with recovery strategies implemented via a behavior tree. Our contributions include:
+
+% \begin{itemize}
+%     \item A Linear Temporal Logic (LTL)-based task planner that composes high-level actions such as grasping, carrying, and delivering.
+%     \item A behavior tree-based task monitor that handles potential failures during loco-manipulation, ensuring robustness in execution.
+% \end{itemize}
+
+% Task 2: Navigation and Model Predictive Control:
+
+% To coordinate a team of robots in cluttered environments, we develop both global navigation and local control components that support reactive, cooperative behavior during transportation. Key contributions include:
+% \begin{itemize}
+%     \item A sampling-based global navigation planner that guides the robot team while avoiding obstacles.
+%     \item A distributed trajectory optimization framework based on ADMM for multi-robot loco-manipulation, tailored for quadrupedal platforms. We benchmark this approach against a centralized planner, demonstrating superior computational efficiency.
+%     % \item We implement it as a model predictive controller for online execution and benchmark with a centralized planner to demonstrate the superior computational speed.
+% \end{itemize}
+
+\section{Related Work}
+\label{sec:related_work}
+\subsection{Multi-Robot Collaborative Transportation}
+% Legged robots. In \cite{vincenti_centralized_2023}, a centralized MPC is proposed to compute motion plans for multiple single rigid bodies including the carrying object. The approach is centralized and does not scale up to the number of robots. With passive chain or active actuation.
+
+% Other distributed approach depends on a global navigation planner.
+
+Recent approaches to collaborative loco-manipulation can be categorized into three main paradigms: centralized, decentralized, and learning-based methods. Centralized approaches, as demonstrated by De Vincenti and Coros \cite{devincenti2023}, formulate a single optimization problem that simultaneously plans trajectories for all robots and the payload. This approach optimizes ground reaction forces, manipulation wrenches, and stepping locations within a unified sparse trajectory optimization framework. While theoretically yielding globally optimal solutions, centralized methods face scalability issues as the number of robots increases.
+
+Alternatively, hierarchical frameworks such as those proposed by Rigo et al. \cite{rigo2025} employ a multi-level approach with an object-level planner, a mapping between object and robot commands, and decentralized whole-body controllers for each robot. This approach balances computational efficiency with coordination quality. Learning-based approaches, exemplified by Pandit et al. \cite{pandit2024} and Feng et al. \cite{feng2025}, offer robust performance in contact scenarios but require extensive training data and struggle with generalization across different robot configurations.
+
+\subsubsection{Holonomically Constrained Systems}
+
+Several studies have explored legged robot teams connected by wires, cables, or rigid rods. Pandit et al.~\cite{pandit2024} developed a learning-based decentralized control approach for multi-biped systems transporting payloads. Their model uses decentralized model-based controllers (decMBC) that only observe their local robot state and its relative position with respect to the carrier reference point. Therefore, the controller can be distributively deployed and does not require communication between different robots, which improves the scalability of the system.
+
+Fawcett et al.~\cite{fawcett2023} proposed a distributed data-driven predictive control framework for collaborative legged locomotion. Rather than deriving mathematical models for the coupled dynamics of multiple robots, they constructed a Hankel matrix from input-output data collected during normal operation. This matrix encapsulates the system's behavior without requiring knowledge of the underlying state-space matrices, which eliminates the need to handle the increasing complexity as agents are added.
+
+Kim et al.~\cite{kim2023} introduced a layered control architecture for robust cooperative locomotion of two quadrupedal robots connected by holonomic constraints. At the higher level of their architecture, they propose a centralized and a distributed MPC. The centralized MPC solves for the global optimal trajectories of all agents simultaneously, while the distributed MPC allows each robot to solve its own optimization problem while sharing information according to a one-step communication delay and agreement protocol.
+
+Yang et al.~\cite{yang2022} demonstrated collaborative navigation and manipulation of cable-towed loads using multiple quadrupedal robots. They present a multi-layered planning approach that uses parallel centralized trajectory optimization to manage hybrid mode transitions. They also developed decentralized planners for each robot, allowing for online collaborative load manipulation.
+
+\subsubsection{Prehensile Collaborative Loco-Manipulation}
+
+More flexible collaborative systems employ prehensile manipulation, where robots grasp the object using manipulators. De Vincenti and Coros~\cite{devincenti2023} developed a centralized Model Predictive Control (MPC) framework for collaborative loco-manipulation. This approach models each agent and shared payload as single rigid bodies to capture dominant dynamics while reducing computational complexity.
+
+Turrisi et al.~\cite{turrisi2024} introduced PACC, an approach for robot-robot and human-robot collaborative carrying tasks using quadrupedal robots. Unlike traditional approaches that use active manipulators with motors at each joint, it employs a lightweight passive arm with intrinsic impedance created by springs and damping elements. PACC integrates with an MPC that incorporates these estimated forces to maintain locomotion stability by keeping the Zero-Moment Point within the support polygon.
+
+Rigo et al.~\cite{rigo2025hierarchical} presented a hierarchical control framework for collision-free collaborative loco-manipulation of large objects. The framework features an MPC-based planner with obstacle avoidance, geometry-aware mapping for end-effector commands and force distribution, and decentralized whole-body controllers. This approach enabled robot teams to successfully manipulate heavy payloads weighing up to 28kg through challenging terrain.
+
+\subsubsection{Non-Prehensile Approaches}
+
+Non-prehensile manipulation offers different trade-offs for collaborative tasks. Feng et al.~\cite{feng2025} developed a reinforcement learning approach for multi-agent loco-manipulation. Their hierarchical policy structure coordinates high-level planning with mid-level pushing strategies and low-level locomotion control to perform long-horizon pushing tasks in complex environments.
+
+In contrast, Sombolestan and Nguyen~\cite{sombolestan2024} created a hierarchical adaptive motion planning framework combining nonlinear MPC with safety-critical features. Their system integrates a high-level planner for collision avoidance, an adaptive controller to compensate for uncertainty in object properties, and a decentralized position manipulation controller to control the motion of each robot. The system was able to successfully manipulate payloads weighing up to 10 kg and navigate around static and dynamic obstacles.
+
+\subsection{ADMM for Distributed Control}
+
+The Alternating Direction Method of Multipliers (ADMM) has emerged as a powerful technique for decomposing complex optimization problems in robotics. Amatucci et al.~\cite{amatucci2022} propose an approach to enhance Model Predictive Control (MPC) for legged robots by leveraging Distributed Optimization with the Alternating Direction Method of Multipliers (ADMM). Their method focuses on decomposing the robot's dynamics into smaller, parallelizable subsystems. Each of these subsystems is then managed by its own Optimal Control Problem (OCP). The core idea is to transform the complex, centralized optimization problem of a whole-body robot into a network of smaller, local independent problems that can be solved in parallel. For instance, a quadruped robot can be decoupled into two parts: front and back. A quadruped with an articulated arm could be split into three subsystems: front, back, and the arm. ADMM ensures consistency between the optimizations of these decoupled subsystems. It facilitates this by enforcing consensus among them, preventing non-physical behaviors. The decomposition allows each subsystem to consider only its relevant decision variables and constraints, significantly reducing the problem size for each local OCP. This distributed approach significantly decreases computational time.
+
+
+\section{Approach}
+\label{sec:approach}
+
+\section{Experiment}
+\label{sec:experiment}
+% Outline:
+% \begin{itemize}
+%     \item We first show the 
+% \end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

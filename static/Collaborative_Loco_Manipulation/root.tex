@@ -1,0 +1,104 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts
+
+\usepackage{amsmath}
+\usepackage{cite}
+\usepackage{amssymb,amsfonts}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{graphicx}
+\usepackage{subfloat}
+\usepackage{textcomp}
+\usepackage{xcolor}
+% \usepackage{algorithm}
+\usepackage{verbatim} 
+\usepackage{mathrsfs}
+\usepackage{subfigure}
+\usepackage{empheq}
+\usepackage{courier}
+\usepackage{lipsum}
+\usepackage{comment}
+\usepackage{gensymb}
+\usepackage{graphicx}
+\usepackage{mathtools, cuted}
+\usepackage{bm}
+\usepackage{ wasysym } % For /ocircle
+\usepackage{soul}
+\usepackage[colorlinks,citecolor=red,urlcolor=black,bookmarks=false,hypertexnames=true,hidelinks]{hyperref}
+
+\let\proof\relax 
+\let\endproof\relax
+\usepackage{amsthm}
+\newtheoremstyle{remarkcolon}
+  {0.5\baselineskip} % Space above
+  {0.5\baselineskip} % Space below
+  {\itshape}         % <-- Body font (italic)
+  {0pt}              % Indent
+  {\bfseries}        % <-- Head font (bold, non-italic)
+  {:}                % Punctuation after head
+  {0.5em}            % Space after head
+  {}                 % Head spec
+\theoremstyle{remarkcolon}
+\newtheorem{remark}{Remark}
+
+\newcommand{\vg}[1]{\bm{#1}}
+\renewcommand{\v}[1]{\mathbf{#1}}
+
+\title{\LARGE \bf
+ACLM: ADMM-Based Distributed Model Predictive Control for Collaborative Loco-Manipulation
+}
+
+\author{\large Anonymous Author(s)}
+
+% \author{Albert Author$^{1}$ and Bernard D. Researcher$^{2}$% <-this % stops a space
+% \thanks{*This work was not supportFaculty of Electrical Engineering, Mathematics and Computer Science,ed by any organization}% <-this % stops a space
+% \thanks{$^{1}$Albert Author is with 
+%         University of Twente, 7500 AE Enschede, The Netherlands
+%         {\tt\small albert.author@papercept.net}}%
+% \thanks{$^{2}$Bernard D. Researcheris with the Department of Electrical Engineering, Wright State University,
+%         Dayton, OH 45435, USA
+%         {\tt\small b.d.researcher@ieee.org}}%
+% }
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods, e.g., holistic trajectory optimization, capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions, leading to conservative behavior. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Extensive simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
+
+\end{abstract}
+
+\input{sections/introduction}
+
+\input{sections/related_work}
+
+\input{sections/preliminaries}
+
+\input{sections/approach}
+
+\input{sections/experiment}
+
+\section{Conclusion}
+\label{sec:conclusion}
+This paper presented an ADMM-based distributed MPC framework for collaborative prehensile loco-manipulation with multiple quadruped manipulators. Exploiting the star-shaped coupling induced by a shared payload, the centralized optimal control problem is decomposed into parallel robot-level subproblems with consensus on interaction wrenches, preserving dynamic coupling while improving scalability. Combined with a wrench-aware whole-body controller, the framework achieves real-time, force-consistent execution. Simulations with up to four robots validate scalability, fast convergence with few ADMM iterations, and robustness to model and terrain variations. Future work includes hardware validation on physical platforms, and exploring GPU implementations to guide decentralized RL training.
+
+% Future work includes implementation with full-order robot dynamics and GPU-accelerated implementation to guide communication-free decentralized RL training.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

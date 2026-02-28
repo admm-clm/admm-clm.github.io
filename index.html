@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="Physically-Feasible Reactive Synthesis for Terrain-Adaptive Locomotion"/>
-  <meta property="og:description" content="An integrated planning framework for quadrupedal locomotion over dynamically changing, unforeseen terrains."/>
+  <meta name="description" content="ADMM-based distributed MPC for collaborative loco-manipulation with quadruped manipulators.">
+  <meta property="og:title" content="ACLM: ADMM-Based Distributed MPC for Collaborative Loco-Manipulation"/>
+  <meta property="og:description" content="Distributed model predictive control for multi-robot collaborative transportation via consensus on interaction wrenches."/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image" content="static/Collaborative_Loco_Manipulation/figures/perceptive_terrain.png" />
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
 
 
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <meta name="twitter:title" content="ACLM: ADMM-Based Distributed MPC for Collaborative Loco-Manipulation">
+  <meta name="twitter:description" content="Distributed MPC for collaborative loco-manipulation with quadruped manipulators and shared payload.">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:image" content="static/Collaborative_Loco_Manipulation/figures/perceptive_terrain.png">
   <meta name="twitter:card" content="summary_large_image">
   <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="keywords" content="collaborative loco-manipulation, distributed MPC, ADMM, quadruped robots, multi-robot manipulation, model predictive control">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Physically-Feasible Reactive Synthesis for Terrain-Adaptive Locomotion</title>
+  <title>ACLM: ADMM-Based Distributed MPC for Collaborative Loco-Manipulation</title>
   <link rel="icon" type="image/x-icon" href="static/images/cartoon_dog.png">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -52,7 +52,7 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Physically-Feasible Reactive Synthesis for Terrain-Adaptive Locomotion</h1>
+            <h1 class="title is-1 publication-title">ACLM: ADMM-Based Distributed MPC for Collaborative Loco-Manipulation</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
@@ -74,7 +74,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="static/pdfs/paper_anonymous.pdf" target="_blank"
+                        <a href="static/pdfs/Collaborative_Loco_Manipulation.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -124,22 +124,16 @@
 </section>
 
 
-<!-- Teaser video-->
+<!-- Scenario overview (teaser) -->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
-        <source src="static/videos/TRO-video-short.mp4"
-        type="video/mp4">
-      </video>
-      <!-- <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
-      </h2> -->
+      <img src="static/Collaborative_Loco_Manipulation/figures/perceptive_terrain.png" alt="Scenario overview" style="width: 100%; border-radius: 8px;">
+      <p class="subtitle is-6 has-text-centered" style="margin-top: 10px; color: #555;">Evaluation scenarios: Gap (A), Slope (B), Narrow Turn (C), Annular (D), 3-robot Gap (E), 4-robot Slope (F), Obstacle avoidance (G).</p>
     </div>
   </div>
 </section>
-<!-- End teaser video -->
+<!-- End scenario overview -->
 
 <!-- Paper abstract -->
 <section class="section hero is-light">
@@ -149,7 +143,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We propose an integrated planning framework for quadrupedal locomotion over dynamically changing, unforeseen terrains. Existing approaches either rely on heuristics for instantaneous foothold selection--compromising safety and versatility--or  solve expensive trajectory optimization problems with complex terrain features and long time horizons. In contrast, our framework leverages reactive synthesis to generate correct-by-construction controllers at the symbolic level, and mixed-integer convex programming (MICP) for dynamic and physically feasible footstep planning for each symbolic transition. We use a high-level manager to reduce the large state space in synthesis by incorporating local environment information, improving synthesis scalability. To handle specifications that cannot be met due to dynamic infeasibility, and to minimize costly MICP solves, we leverage a symbolic repair process to  generate only necessary symbolic transitions. During online execution, re-running the MICP with real-world terrain data, along with runtime symbolic repair, bridges the gap between offline synthesis and online execution. Through extensive simulation and hardware experiments, we demonstrate our framework's capabilities to discover missing locomotion skills and react promptly in safety-critical environments, such as scattered stepping stones and rebars.
+            Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints on interaction wrenches. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
           </p>
         </div>
       </div>
@@ -164,26 +158,13 @@
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Approach Summary</h2>
-        <div class="video-container" style="display: flex; gap: 20px; justify-content: center; align-items: center; margin-bottom: 20px;">
-          <div style="text-align: center; width: 100%;">
-            <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-              <source src="static/videos/unstructured-2-vis.mp4" type="video/mp4">
-            </video>
-            <p class="subtitle is-5" style="margin-top: 10px;">Unstructured Terrain with a Gap</p>
-
-            <!-- Inserted image -->
-            <img src="static/images/system_diagram.png" alt="Example Image" style="margin-top: 20px; width: 100%; max-width: 600px;">
-            <p class="subtitle is-5" style="margin-top: 10px;">Fig.1 System Diagram</p>
-          </div>
+        <div class="video-container" style="margin-bottom: 24px;">
+          <img src="static/Collaborative_Loco_Manipulation/figures/flowchart.png" alt="ADMM distributed MPC framework" style="width: 100%; max-width: 560px; border-radius: 8px;">
+          <p class="subtitle is-6" style="margin-top: 12px; color: #555;">System overview: robot subproblems are solved in parallel with consensus on interaction wrenches; trajectories are executed by local wrench-aware WBC.</p>
         </div>
-
-
-
         <div class="content has-text-justified">
           <p>
-            We manage complexity at both symbolic and physical levels. At the symbolic level, we leverage reactive synthesis to decompose the local navigation problem into manageable subproblems whose solutions can be reused by synthesis for different scenarios. Each subproblem corresponds to finding controls for a short-horizon symbolic transition and is solved via a MICP to provide physical feasibility certificates of the transition. As shown in Fig.1, our framework consists of offline synthesis, online execution, and low-level tracking control.
-            
-            During the offline phase, we generate a set of potentially useful skills and corresponding locomotion gaits based on predefined terrain states and goals, while leveraging symbolic repair to  find missing yet necessary symbolic transitions. At runtime, we leverage runtime repair to identify new symbolic transitions necessary for unforeseen terrain configurations or intermediate request goals.
+            We decompose the tightly coupled multi-robot optimal control problem by exploiting the star-shaped coupling induced by the shared payload: each robot interacts directly with the payload rather than with other robots. This allows consensus ADMM to split the problem into a payload subproblem and parallel robot-level subproblems, with consensus constraints only on the manipulation wrenches (force and torque). The payload dynamics use local copies of these wrenches; each robot subproblem uses the payload state from the previous ADMM iteration, keeping subproblems tractable. With warm-starting across MPC windows, only a few ADMM iterations per cycle are needed. A hierarchical wrench-aware whole-body controller then tracks the optimized poses and interaction wrenches at 500 Hz, ensuring force-consistent execution.
           </p>
         </div>
       </div>
@@ -193,87 +174,38 @@
 <!-- End paper method -->
 
 
-<!-- Unstructured Terrain -->
+<!-- Rough Terrain -->
 <section class="hero is-small is-light">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">Unstructured Terrain</h2>
-          <h3 class="subtitle is-4" style="text-align: center; margin-bottom: 20px; margin-top: 20px">Scenario 1</h3>
-          <div class="video-container" style="display: flex; gap: 20px; justify-content: center; align-items: center;">
-            <div style="text-align: center; width: 100%;">
-              <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-                <source src="static/videos/unstructured-1-sideview.mp4" type="video/mp4">
+          <h2 class="title is-3">Rough Terrain</h2>
+          <div class="columns is-multiline" style="margin-top: 16px;">
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/gap.mp4" type="video/mp4">
               </video>
-              <p class="subtitle is-5" style="margin-top: 10px;">Side View</p>
+              <p class="subtitle is-6" style="margin-top: 6px;"><strong>Gap</strong> — Stepped terrain, adaptive swing heights</p>
             </div>
-            <div style="text-align: center; width: 100%;">
-              <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-                <source src="static/videos/unstructured-1-frontview.mp4" type="video/mp4">
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/slope.mp4" type="video/mp4">
               </video>
-              <p class="subtitle is-5" style="margin-top: 10px;">Front View</p>
+              <p class="subtitle is-6" style="margin-top: 6px;"><strong>Slope</strong> — 10° incline, base and cargo compensating for tilt</p>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scenario 2 -->
-      <div class="columns is-centered has-text-centered" style="margin-top: 40px;">
-        <div class="column is-four-fifths">
-          <h3 class="subtitle is-4" style="text-align: center; margin-bottom: 20px;">Scenario 2</h3>
-          <div style="text-align: center; width: 100%;">
-            <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-              <source src="static/videos/unstructured-2.mp4" type="video/mp4">
-            </video>
-            <!-- <p class="subtitle is-5" style="margin-top: 10px;">Unstructured Terrain with a Gap</p> -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End Unstructured Terrain -->
-
-<!-- Rebar Terrain -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Rebar Terrain</h2>
-          <h3 class="subtitle is-4" style="text-align: center; margin-bottom: 20px; margin-top: 20px;">Scenario 1</h3>
-          <div style="text-align: center; width: 100%;">
-            <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-              <source src="static/videos/rebar-1.mp4" type="video/mp4">
-            </video>
-            <!-- <p class="subtitle is-5" style="margin-top: 10px;">Rebar Terrain - Scenario 1</p> -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Scenario 2 -->
-      <div class="columns is-centered has-text-centered" style="margin-top: 40px;">
-        <div class="column is-four-fifths">
-          <h3 class="subtitle is-4" style="text-align: center; margin-bottom: 20px;">Scenario 2</h3>
-          <div style="text-align: center; width: 100%;">
-            <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-              <source src="static/videos/rebar-2.mp4" type="video/mp4">
-            </video>
-            <!-- <p class="subtitle is-5" style="margin-top: 10px;">Rebar Terrain - Scenario 2</p> -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Scenario 3 -->
-      <div class="columns is-centered has-text-centered" style="margin-top: 40px;">
-        <div class="column is-four-fifths">
-          <h3 class="subtitle is-4" style="text-align: center; margin-bottom: 20px;">Scenario 3</h3>
-          <div style="text-align: center; width: 100%;">
-            <video poster="" id="tree" autoplay controls muted loop style="width: 100%;">
-              <source src="static/videos/rebar-3.mp4" type="video/mp4">
-            </video>
-            <!-- <p class="subtitle is-5" style="margin-top: 10px;">Rebar Terrain - Scenario 3</p> -->
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/turn.mp4" type="video/mp4">
+              </video>
+              <p class="subtitle is-6" style="margin-top: 6px;"><strong>Narrow Turn</strong> — 90° turn in narrow passage</p>
+            </div>
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/circle.mp4" type="video/mp4">
+              </video>
+              <p class="subtitle is-6" style="margin-top: 6px;"><strong>Annular</strong> — Circular path on elevated platform</p>
+            </div>
           </div>
         </div>
       </div>
@@ -281,7 +213,118 @@
   </div>
 </section>
 
+<!-- Obstacle Avoidance -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Obstacle Avoidance</h2>
+          <p class="subtitle is-5" style="margin-bottom: 16px;">Collision-free navigation with CBF constraints; MPC finds feasible trajectories through narrow passages.</p>
+          <div class="columns">
+            <div class="column">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/admm_gazebo_obstacle_render.mp4" type="video/mp4">
+              </video>
+              <p class="subtitle is-6" style="margin-top: 8px;">Two robots with cargo avoiding box obstacles (Gazebo + Blender)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Analysis & Results -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Scalability & Analysis</h2>
+        <div class="content has-text-centered" style="margin-bottom: 28px;">
+          <p class="subtitle is-5" style="margin-bottom: 10px;">We highlight three contributions:</p>
+          <ul style="list-style: disc; display: inline-block; text-align: left; margin: 0 auto; padding-left: 1.4em;">
+            <li>Real-time distributed planning that scales with team size</li>
+            <li>Tight integration of MPC with wrench-aware whole-body control</li>
+            <li>Robustness under model uncertainty and full wrench tracking</li>
+          </ul>
+        </div>
+
+        <h3 class="title is-5">Scalability — Real-time performance independent of team size</h3>
+        <p class="content has-text-justified">
+          Our ADMM decomposition preserves dynamic coupling (consensus on interaction wrenches) while yielding parallel robot-level subproblems. Centralized MPC solves one large OCP that grows with robot count; we validate on flat and Gap–Slope terrain with 2–4 robots.
+        </p>
+        <div class="columns is-multiline" style="margin-bottom: 16px;">
+          <div class="column is-half">
+            <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+              <source src="static/videos/three_robots_gap.mp4" type="video/mp4">
+            </video>
+            <p class="subtitle is-6" style="margin-top: 6px;">Three robots — stepped terrain (Gap)</p>
+          </div>
+          <div class="column is-half">
+            <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+              <source src="static/videos/four_robots_slope.mp4" type="video/mp4">
+            </video>
+            <p class="subtitle is-6" style="margin-top: 6px;">Four robots — sloped terrain</p>
+          </div>
+        </div>
+        <img src="static/Collaborative_Loco_Manipulation/figures/scalability_analysis.png" alt="Scalability analysis" style="width: 100%; border-radius: 8px;">
+        <p class="subtitle is-6" style="margin-top: 8px; color: #555;">CPU time: distributed vs centralized MPC for 2–4 robots (flat and Gap–Slope). Red dashed line: 30 Hz real-time threshold.</p>
+        <p class="content has-text-justified" style="margin-top: 12px;">
+          Distributed MPC achieves 3.6×–11.4× speedups on flat terrain (median 6.73–11.63 ms vs 24.38–133.13 ms centralized) and 1.7×–7.3× on Gap–Slope, staying at 50 Hz (100 Hz flat) for all team sizes; centralized drops below 30 Hz for 3–4 robots. The decomposition thus delivers real-time performance without sacrificing coupling-aware planning.
+        </p>
+
+        <div class="content" style="margin-top: 32px;">
+          <h3 class="title is-5">Fast convergence with few ADMM iterations</h3>
+          <p class="has-text-justified">
+            We use 2 ADMM and 1 SQP iteration per MPC solve. Warm-starting from the previous window lets consensus on wrenches converge quickly; we validate with 60 trials on Gap terrain across waypoints and configurations.
+          </p>
+          <img src="static/Collaborative_Loco_Manipulation/figures/mpc_residuals_multi_trial.png" alt="MPC residuals and computation time" style="width: 100%; border-radius: 8px; margin-top: 12px;">
+          <p class="subtitle is-6" style="margin-top: 8px; color: #555;">Residual convergence and computation time across ADMM–SQP configurations.</p>
+          <p class="has-text-justified" style="margin-top: 12px;">
+            One ADMM iteration leaves residuals unsuppressed in the gap phase; two keep them in tolerance with rare violations; five improve further at higher cost. More SQP iterations also increase solve time. The 2+1 choice balances constraint satisfaction and real-time efficiency—the pipeline does not need many iterations to stay stable.
+          </p>
+        </div>
+
+        <div class="content" style="margin-top: 32px;">
+          <h3 class="title is-5">Obstacle avoidance with integrated MPC–WBC</h3>
+          <p class="has-text-justified">
+            We add obstacle avoidance via CBFs in the distributed MPC and run the wrench-aware WBC in Gazebo (Blender rendering). The question is whether collision-free plans are accurately tracked while enforcing wrench consistency at the grasps.
+          </p>
+          <img src="static/Collaborative_Loco_Manipulation/figures/obstacle_overview.png" alt="Obstacle avoidance overview" style="width: 100%; border-radius: 8px; margin-top: 12px;">
+          <p class="subtitle is-6" style="margin-top: 8px; color: #555;">Left: collision-free trajectory through obstacles. Right: pose tracking error over a 10 s segment (full task 110 s).</p>
+          <p class="has-text-justified" style="margin-top: 12px;">
+            With only start-to-goal reference, MPC finds feasible paths through narrow passages. Max tracking errors are 0.0183 m and 1.644° over a 10 s window; spikes at ground impact stay bounded. The integrated MPC–WBC thus achieves real-time obstacle avoidance with accurate, force-consistent execution.
+          </p>
+        </div>
+
+        <div class="content" style="margin-top: 32px;">
+          <h3 class="title is-5">Robustness to mass and inertia uncertainty</h3>
+          <p class="has-text-justified">
+            We stress-test with varied nominal cargo mass and deliberate mass/inertia modeling errors (reference: 6.5 m translation + 90° rotation). Explicit wrench optimization and tracking let the WBC compensate in a force-consistent way.
+          </p>
+          <img src="static/Collaborative_Loco_Manipulation/figures/robustness.png" alt="Robustness under mass and inertia variation" style="width: 100%; border-radius: 8px; margin-top: 12px;">
+          <p class="subtitle is-6" style="margin-top: 8px; color: #555;">Cargo pose tracking errors under different nominal masses and parameter perturbations.</p>
+          <p class="has-text-justified" style="margin-top: 12px;">
+            Median errors stay low across masses and errors; failure appears only near ~67% modeling error. Overestimated mass/inertia improves robustness (larger wrenches, more margin). This underscores the value of explicit wrench computation and tracking versus position-only tracking.
+          </p>
+        </div>
+
+        <div class="content" style="margin-top: 32px;">
+          <h3 class="title is-5">Why full wrench tracking matters — ablation</h3>
+          <p class="has-text-justified">
+            We optimize and track the full 6-DoF wrench at the grasps. Ablating torque (force-only tracking) tests whether this is necessary.
+          </p>
+          <img src="static/Collaborative_Loco_Manipulation/figures/wrench_ablation.png" alt="Force-only vs full wrench tracking" style="width: 100%; border-radius: 8px; margin-top: 12px;">
+          <p class="subtitle is-6" style="margin-top: 8px; color: #555;">Force-only vs full wrench tracking: angular error and stability.</p>
+          <p class="has-text-justified" style="margin-top: 12px;">
+            Force-only tracking leads to growing angular error and instability. Enabling torque—especially about the robot–cargo alignment axis—restores stability; vertical torque stays tightly constrained to avoid slip. The wrench-aware WBC is thus essential for stable, accurate collaborative transport, not an optional add-on.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- Paper poster -->
 <!-- <section class="hero is-small is-light">

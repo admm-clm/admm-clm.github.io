@@ -1,0 +1,100 @@
+\section{Preliminaries}
+\label{sec:preliminaries}
+\subsection{Consensus ADMM}
+We adopt the standard \textit{consensus} ADMM formulation \cite{boyd2011distributed} for problems of the form
+\begin{equation}\label{eq:consensusADMM}
+\begin{aligned}
+    \underset{\Bar{\v x},\{\v x_i\}_{i=1}^{N}}{\text{min}} \quad
+    & \sum_{i = 1}^{N} f_i(\v x_i) + g(\Bar{\v x}) \\
+    \text{s.t.} \quad
+    & \v x_i = \Bar{\v x}, \quad i = 1,\dots,N ,
+\end{aligned}
+\end{equation}
+where $\v x_i$ denotes the local decision variables of subsystem $i$, $\Bar{\v x}$ is a global consensus variable, and $g(\Bar{\v x})$ is an optional regularization term. 
+By establishing the scaled augmented Lagrangian (AL) of~\eqref{eq:consensusADMM},
+consensus ADMM proceeds by alternating updates of the local variables, the global consensus variable, and the dual variables:
+\begin{subequations}\label{eq:consensus-updates}
+\begin{align}
+    \v x_i^{k+1}
+    &:= \arg\min_{\v x_i}
+    \left(
+        f_i(\v x_i)
+        + \frac{\rho}{2}
+        \|\v x_i - \Bar{\v x}^k + \v w_i^k\|^2
+    \right),
+    \quad \forall i, \label{eq:x-update} \\[4pt]
+    \Bar{\v x}^{k+1}
+    &:= \arg\min_{\Bar{\v x}}
+    \left(
+        g(\Bar{\v x})
+        + \frac{\rho}{2}
+        \sum_{i=1}^{N}
+        \|\v x_i^{k+1} - \Bar{\v x} + \v w_i^k\|^2
+    \right), \label{eq:z-update} \\[4pt]
+    \v w_i^{k+1}
+    &:= \v w_i^k + \v x_i^{k+1} - \Bar{\v x}^{k+1},
+    \quad \forall i. \label{eq:dual-update}
+\end{align}
+\end{subequations}
+where $\{\v w_i\}$ are the scaled dual variables and $\rho > 0$ is the penalty parameter.
+This structure enables parallel optimization of the local subproblems~\eqref{eq:x-update}, followed by a lightweight consensus update~\eqref{eq:z-update}. The updates in~\eqref{eq:consensus-updates} correspond to standard \textit{consensus} ADMM. 
+We use the standard \textit{Gauss–Seidel} consensus variant, which provides better convergence than the fully parallel \textit{Jacobi} variant while keeping the consensus subproblem inexpensive.
+% The \textit{Jacobi} ADMM updates all primal variables, including the consensus variable $\Bar{\v x}$, in parallel using values from the previous iteration, i.e., the consensus step uses ${\v x_i^k}$ instead of ${\v x_i^{k+1}}$.
+
+\subsection{Centralized Optimization Formulation}
+The centralized optimization formulation is written as:
+\begin{subequations} 
+\begin{align}
+	\underset{\v U, \v X}{\text{min}} \ \mathcal{C}(\v U, \v X) \coloneqq & \sum_{k = 0}^{N-1}l_k(\v x[k], \v u[k]) + l_N(\v x[N]) \\
+	\text{s.t.} \quad & \v x[k+1] = \mathcal{D}(\v x[k], \v u[k]) \\
+    & \v x[0] = \v x_{\text{init}} \\
+    & \v g(\v x[k], \v u[k]) = 0 \\
+    & \v h(\v x[k], \v u[k]) \leq 0
+\end{align}
+\end{subequations}
+where $\v x[k]$ and $\v u[k]$ denote the state and control variables at the $k$-th time step over a horizon of $N+1$ steps, with initial condition $\v x_{\text{init}}$. The stacked state and control trajectories are defined as $\v X := [\v x[0]^{\top}, \v x[1]^{\top}, \dots,\v x[N]^{\top}]^{\top}$ and $\v U := [\v u[0]^{\top}, \v u[1]^{\top}, \dots,\v u[N-1]^{\top}]^{\top}$. At each time step, the state and control vectors are decomposed into payload and robot components: $\v x[k] := [\v x_{0}[k]^{\top}, \dots, \v x_{i}[k]^{\top}, \dots,\v x_{R}[k]^{\top}]^{\top}$, $\v u[k] := [\v u_{1}[k]^{\top}, \dots, \v u_{i}[k]^{\top}, \dots,\v u_{R}[k]^{\top}]^{\top}$,
+% \begin{equation}
+% \begin{aligned}\nonumber
+%     \v x[k] := [\v x_{0}[k]^{\top}, \dots, \v x_{i}[k]^{\top}, \dots,\v x_{R}[k]^{\top}]^{\top},\\
+%     \v u[k] := [\v u_{1}[k]^{\top}, \dots, \v u_{i}[k]^{\top}, \dots,\v u_{R}[k]^{\top}]^{\top}
+% \end{aligned}
+% \end{equation}
+where index $i \in \{0,1,\dots,R\}$ denotes the rigid body, with $i=0$ corresponding to the payload and $i>0$ to the robots. The payload has no direct control input, as its motion is governed by the interaction forces and torques exerted by the robots. The payload state is defined as
+\begin{equation}
+    \begin{aligned}
+        \v x_{0}[k] := [\v r_{0}[k]^{\top}, \dot{\v r}_{0}[k]^{\top}, \vg \theta_{0}[k]^{\top}, \v l_{0}[k]^{\top}]^{\top}
+    \end{aligned}
+\end{equation}
+where $\v r$, $\dot{\v r}$, $\vg \theta$, and $\v l \in \mathbb{R}^3$ denote the position, linear velocity, Euler angles, and angular momentum of the rigid body, respectively. In this work, each robot is also approximated as a single rigid body to reduce optimization complexity; however, the proposed distributed framework readily extends to full-order models with joint-level dynamics and whole-body constraints. For each robot $i \in \{1,\dots,R\}$, the state and control variables are currently defined as
+\begin{equation}
+    \begin{aligned}
+        & \forall j \in \{0, \dots, n_f-1\},\\
+        & \v x_{i}[k] := [\v r_{i}[k]^{\top}, \dot{\v r}_{i}[k]^{\top}, \vg \theta_{i}[k]^{\top}, \v l_{i}[k]^{\top}, \v p_{i,j}[k]^{\top}]^{\top}\\
+        & \v u_{i}[k] := [\v f_{i,j}[k]^{\top}, \dot{\v p}_{i,j}[k]^{\top}, \v f_{i,h}[k]^{\top}, \vg \tau_{i,h}[k]^{\top}]^{\top}
+    \end{aligned}
+\end{equation}
+where $\v p_{i,j}$ and $\v f_{i,j}$ denote the position and contact force of the $j$-th foot, $n_f$ is the number of feet, and $\v f_{i,h}$ and $\vg \tau_{i,h}$ represent the manipulation force and torque applied on the robot’s arm end-effector (EE) when grasping the payload.
+
+The coupled system dynamics $\mathcal{D}$ can be decomposed into payload and robot components $\mathcal{D}^0$ and $\mathcal{D}^{i}$. For clarity of presentation, the time-step superscript $k$ is omitted in the following equations. The second-order dynamics of the payload are given by
+\begin{subequations}\label{eq:raw_payload_dynamics}
+    \begin{align}
+        \ddot{\v r}_{0} &= \frac{1}{m_0}\!\left(- \sum\nolimits_i \v f_{i,h}\right) + \boldsymbol{g}, \\
+        \dot{\v l}_0 &= \sum\nolimits_i 
+        \big(\v p_{i,h}(\v r_0,\vg \theta_0) - \v r_0\big) \times (-\v f_{i,h})
+        - \vg \tau_{i,h},
+    \end{align}
+\end{subequations}
+where $\v p_{i,h}(\cdot,\cdot)$ denotes the position of the $i$-th robot’s arm EE expressed in the inertial frame, obtained by transforming a constant handle offset in the cargo frame. The second-order dynamics of the $i$-th robot are expressed as
+\begin{subequations}\label{eq:raw_robot_dynamics}
+    \begin{align}
+        \ddot{\v r}_{i} =&
+        \frac{1}{m_i}\!\left(\sum\nolimits_{j} \v f_{i,j} + \v f_{i,h}\right) + \boldsymbol{g}, \\
+        \dot{\v l}_i =&
+        \sum\nolimits_j (\v p_{i,j} - \v r_i) \times \v f_{i,j}
+        + \\ & (\v p_{i,h}(\v r_0,\vg \theta_0) - \v r_i) \times \v f_{i,h}
+        + \vg \tau_{i,h},
+    \end{align}
+\end{subequations}
+% where $\v p_{i,j}$ and $\v f_{i,j}$ denote the position and contact force of the $j$-th foot of robot $i$, respectively.
+
+All continuous-time dynamics are discretized using the backward Euler method for use in the optimal control formulation. The equality and inequality constraint functions $\v g(\cdot)$ and $\v h(\cdot)$ are introduced later.
