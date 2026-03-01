@@ -23,6 +23,18 @@ body {
   padding-bottom: 3rem;
 }
 
+/* Top-of-page teaser video (full-width, REFINE-DP style) */
+.hero.teaser.is-fullwidth .hero-body {
+  padding: 0;
+}
+
+.hero.teaser.is-fullwidth .teaser-video-fullwidth {
+  width: 100%;
+  display: block;
+  max-height: 85vh;
+  object-fit: cover;
+}
+
 .teaser {
   font-family: 'Google Sans', sans-serif;
 }
