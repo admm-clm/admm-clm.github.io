@@ -30,7 +30,19 @@
 \usepackage{bm}
 \usepackage{ wasysym } % For /ocircle
 \usepackage{soul}
-\usepackage[colorlinks,citecolor=red,urlcolor=black,bookmarks=false,hypertexnames=true,hidelinks]{hyperref}
+% \usepackage[colorlinks,citecolor=red,urlcolor=black,bookmarks=false,hypertexnames=true,hidelinks]{hyperref}
+\makeatletter
+\let\NAT@parse\undefined
+\makeatother
+
+\usepackage[hypertexnames=true,bookmarks=false]{hyperref}
+\hypersetup{
+  colorlinks=false,
+  pdfborderstyle={/S/S/W 1.5},
+  linkbordercolor=red,
+  citebordercolor=green,
+  urlbordercolor=cyan
+}
 
 \let\proof\relax 
 \let\endproof\relax
@@ -78,7 +90,7 @@ ACLM: ADMM-Based Distributed Model Predictive Control for Collaborative Loco-Man
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods, e.g., holistic trajectory optimization, capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions, leading to conservative behavior. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Extensive simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
+Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods, e.g., holistic trajectory optimization, capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions, leading to conservative behavior. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Extensive simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty. \url{https://admm-clm.github.io/}
 
 \end{abstract}
 
@@ -94,7 +106,7 @@ Collaborative transportation of heavy payloads via loco-manipulation is a challe
 
 \section{Conclusion}
 \label{sec:conclusion}
-This paper presented an ADMM-based distributed MPC framework for collaborative prehensile loco-manipulation with multiple quadruped manipulators. Exploiting the star-shaped coupling induced by a shared payload, the centralized optimal control problem is decomposed into parallel robot-level subproblems with consensus on interaction wrenches, preserving dynamic coupling while improving scalability. Combined with a wrench-aware whole-body controller, the framework achieves real-time, force-consistent execution. Simulations with up to four robots validate scalability, fast convergence with few ADMM iterations, and robustness to model and terrain variations. Future work includes hardware validation on physical platforms, and exploring GPU implementations to guide decentralized RL training.
+This paper presented an ADMM-based distributed MPC framework for collaborative prehensile loco-manipulation with multiple quadrupedal manipulators. Exploiting the star-shaped coupling induced by a shared payload, the centralized optimal control problem is decomposed into parallel robot-level subproblems, preserving dynamic coupling while improving scalability. Combined with a wrench-aware whole-body controller, the framework achieves real-time, force-consistent execution. Simulations with up to four robots validate scalability, fast convergence, and robustness to model and terrain variations. Future work includes hardware validation on physical platforms, and exploring GPU implementations to guide decentralized RL training.
 
 % Future work includes implementation with full-order robot dynamics and GPU-accelerated implementation to guide communication-free decentralized RL training.
 

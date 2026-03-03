@@ -15,10 +15,10 @@
 % \end{subequations}
 % where $\mathcal{D}^{0}$ and $\mathcal{D}^{i}$ correspond to the subsystem dynamics Eqs.~(\ref{eq:payload_dynamics}) and (\ref{eq:robot_dynamics}) respectively. It can be seen that each dynamics equation and inequality constraints still depend not only single payload/robot state but also other system's states. For the latter case, we call them inter-system constraints. Therefore, one major contribution of this work is to develop an optimization framework that further separates each subsystem so that each subproblem can be solved in parallel to accelerate the computational time.
 
-From previous section, it can be seen that each dynamics equation and part of the inequality constraints still depend not only single payload/robot state but also other system's states. For the latter case, we call them inter-system constraints. Therefore, one major contribution of this work is to develop an optimization framework that further separates each subsystem so that each subproblem can be solved in parallel to accelerate the computational time.
+In the previous section, it can be seen that each dynamics equation and part of the inequality constraints still depend not only single payload/robot state but also other system's states. For the latter case, we call them inter-system constraints. Therefore, one major contribution of this work is to develop an optimization framework that further separates each subsystem so that each subproblem can be solved in parallel to improve the computational efficiency.
 
 \subsection{Decomposed System Dynamics}
-To apply ADMM, we first create the control variables $\v u_0$ for the payload, which consists of global copies of the manipulation wrench including force and torque variables applied by each robot:
+To apply ADMM, we first create the control variables $\v u_0$ for the payload, which consists of global copies of the manipulation wrench, including force and torque variables applied by each robot:
 \begin{equation}
     \begin{aligned}
         \v u_{0}[k] := [\bar{\v f}_{i,h}[k]^{\top}, \bar{\vg \tau}_{i,h}[k]^{\top}]^{\top}, i \in \{1, \dots, R\}
@@ -26,19 +26,20 @@ To apply ADMM, we first create the control variables $\v u_0$ for the payload, w
 \end{equation}
 
 
-For better illustration of each subsystem, we use $\vg \phi_i = [\v x_i[0,\dots,N], \v u_i[0,\dots,N-1]]^{\top}$ to express the trajectory of the concatenated state and control variables for the $i^{\textit{th}}$ rigid body. Then we build consensus constraint for the manipulation force and torque variables between the payload and robot states based on the Newton's law:
+For better illustration of each subsystem, we use $\vg \phi_i = [\v x_i[0,\dots,N], \v u_i[0,\dots,N-1]]^{\top}$ to express the trajectory of the concatenated state and control variables for the $i$-th rigid body. Then we build consensus constraint for the manipulation force and torque variables between the payload and robot states based on the Newton's law:
 \begin{subequations}\label{eq:consensus_constraint}
     \begin{align}
-        & \forall i \in \{1, \dots, R\},\\
+        \nonumber & \forall i \in \{1, \dots, R\},\\
         & \v f_{i,h}[k] + \bar{\v f}_{i,h}[k] = 0,\\
         & \vg \tau_{i,h}[k] + \bar{\vg \tau}_{i,h}[k] = 0
     \end{align}
 \end{subequations}
 
 \begin{remark}\label{remark:consensus}
-Instead of introducing consensus copies of both state and control variables for each robot’s neighbor (the payload), we deliberately avoid enforcing state consensus to prevent unnecessary state augmentation. For a single quadruped manipulator, even using a simplified model, the subsystem already has a high-dimensional state (24 states), making the computational cost highly sensitive to further state expansion. Moreover, unlike contact-implicit formulations \cite{shorinwa_disco_2024}, the dynamic coupling between the robots and the payload in our static grasping setup is dominated by interaction forces and torques rather than state variables. Consequently, for dynamics and inter-system constraints that involve state variables from other subsystems, we use the values from the previous ADMM iteration. This approximation has been empirically shown to have negligible impact on performance while significantly improving computational efficiency, consistent with observations in \cite{amatucci2022}.
+\textbf{Approximated State Copy}: Instead of introducing consensus copies of both state and control variables for each robot’s neighbor (the payload), we deliberately avoid enforcing state consensus to prevent unnecessary state augmentation. For a single quadrupedal manipulator, even using a simplified model, the subsystem already has a high-dimensional state (i.e., 24 states), making the computational cost highly sensitive to further state expansion. Moreover, unlike contact-implicit formulations \cite{shorinwa_disco_2024}, the dynamic coupling between the robots and the payload in our static grasping setup is dominated by interaction forces and torques rather than state variables. Consequently, for dynamics and inter-system constraints that involve state variables from other subsystems, we use the values from the previous ADMM iteration. This approximation has been empirically shown to have negligible impact on performance while improving computational efficiency, consistent with observations in \cite{amatucci2022}.
 \end{remark}
-By establishing local copies, the payload dynamics can get rid of the dependency on $\v u_i (i > 0)$ and replace with the new control variable $\v u_0$. To consider the coupling effects from the payload state in the robot dynamics without creating payload state copies, we use the payload states from the previous ADMM iteration as described in Remark \ref{remark:consensus}. The discrete dynamics equations for the payload and robots at the $m+1^{\text{th}}$ ADMM iteration can be written as:
+%\textcolor{red}{[can we give it a naming, e.g., "approximated state copy"? If this is the key part that makes the ADMM solvable in an MPC fashion, maybe we should list this as the second contribution bullet point?]}
+By establishing local copies, the payload dynamics gets rid of the dependency on $\v u_i (i > 0)$ and replaces it with the new control variable $\v u_0$. To consider the coupling effects from the payload state in the robot dynamics without creating payload state copies, we use the payload states from the previous ADMM iteration as described in Remark \ref{remark:consensus}. The discrete dynamics equations for the payload and robots at the $m+1^{\text{th}}$ ADMM iteration can be written as:
 \begin{subequations}
     \begin{align}
         & \v x_{0}^{m+1}[k+1] = \mathcal{D}^0(\v x_{0}^{m+1}[k], \v u_{0}^{m+1}[k])\\
@@ -53,8 +54,9 @@ We classify the constraints into independent constraints, applied locally to eac
 
 \subsubsection{Independent --- \textbf{Frictional and Contact}}
 The manipulation contact wrench cone is simplified to a positive normal force constraint, a manipulation friction cone, and a bounding box $\mathcal{B}$ for the moment part defined in Eqs.~(\ref{eq:mani_force_non_zero}) - (\ref{eq:wrench_cone}).
-Point-foot positive normal force and frictional constraints are defined in Eqs.~(\ref{eq:force_non_zero}) - (\ref{eq:force_friction_cone}). We define $\v n$ as the normal vector of the grasping point or the ground, corresponding to the payload orientation $\vg \theta_0$ or the foot EE tangential position $\v p^{xy}_{i,j}$ by inquiring the terrain map. The friction cone $\mathcal{F}$ depends on the friction coefficient $\mu$ and the normal vector. Contact constraints forces the EE velocity to be zero during stance phase and the contact force to be zero during non-contact. 
+Point-foot positive normal force and frictional constraints are defined in Eqs.~(\ref{eq:force_non_zero}) - (\ref{eq:force_friction_cone}). We define $\v n$ as the normal vector of the grasping point or the ground, corresponding to the payload orientation $\vg \theta_0$ or the foot EE tangential position $\v p^{xy}_{i,j}$ by inquiring the terrain map. The friction cone $\mathcal{F}$ depends on the friction coefficient $\mu$ and the $\v n$. Contact constraints force the EE velocity to be zero during stance phase and the contact force to be zero during non-contact. 
 % $\mathcal{C}_{i,j}$ represents the set of all time steps indicating stance for the $j^{\rm th}$ foot of the $i^{\rm th}$ robot.
+\begin{subequations}
 \begin{align}
     \nonumber &\forall i \in \{1,\dots,R\},\\\label{eq:mani_force_non_zero}
     & \v f_{i,h}[k] \cdot \v n_{i,h}(\vg \theta_0[k]) \ge 0,\\
@@ -73,6 +75,7 @@ Point-foot positive normal force and frictional constraints are defined in Eqs.~
         % \\\label{eq:force_zero}
         %  &\v f_{i,j}[k] = 0, \ \forall i \notin \mathcal{C}_{i,j}
 \end{align}
+\end{subequations}
 
 % \subsubsection{Actuation Constraint}
 % Since the joint angles are omitted in the single rigid body model, we use a fixed Jacobian $\v J_j(\v q_j^{\text{ref}})$ at a nominal joint pose $\v q_j^{\text{ref}}$ for each leg to approximately consider the torque limit constraint in Eq.~(\ref{eq:max_torque}). 
@@ -88,7 +91,7 @@ Point-foot positive normal force and frictional constraints are defined in Eqs.~
 % % $\vg \tau_{\rm max}^{\prime}$ is the torque limit applied on the base, and $\v I$ is the moment of inertia for the approximated single rigid body.
 
 \subsubsection{Independent --- \textbf{Foot Kinematics}}
-The kinematics constraint in limits the possible foot EE movements inside a nominal box region to assure safety and avoid singularity.
+The kinematics constraint limits the possible foot EE movements inside a nominal box region to ensure safety and avoid singularity.
 % \begin{equation}
 % \begin{aligned}
 %     \nonumber
@@ -106,7 +109,7 @@ The kinematics constraint in limits the possible foot EE movements inside a nomi
 
 % \textbf{Perceptive mode}. When an elevation map and planar terrain decomposition are available (e.g., from \cite{miki2022elevation}), we use two complementary constraints. (1) \textit{Stance height:} For each stance foot, the height is constrained based on the height map.
 % (2) \textit{Stance polygon:} For each stance phase, a convex safe region in the plane is built from the terrain segmentation (convex polygon in a planar region). The foot's $(x,y)$ position is constrained to lie inside this polygon: $\v A_{\text{foot}} \, \v p_{i,j}[k] + \v b_{\text{foot}} \geq 0$, where $(\v A_{\text{foot}}, \v b_{\text{foot}})$ encode the polygon edges in world frame (via the region's plane-to-world transform). The polygon is selected heuristically for each stance phase similar to \cite{grandia2023perceptive}.
-Foot placements are constrained to satisfy either a default terrain height or the elevation map. In perceptive mode, admissible footholds are restricted to convex safe regions extracted from the elevation map \cite{miki2022elevation}, ensuring collision-free and stable contacts. The convex regions are selected heuristically for each stance phase similar to \cite{grandia2023perceptive}.
+Foot placements are constrained to satisfy either a default terrain height or the elevation map. In perceptive mode, admissible footholds are restricted to convex safe regions extracted from the elevation map, ensuring collision-free and stable contacts. The convex regions are selected heuristically for each stance phase similar to \cite{grandia2023perceptive}.
 
 % The foot placement constraint is only applied to the robot side and can be divided into perceptive and non-perceptive mode. The perceptive mode relies on a terrain segmentation pipeline including elevation mapping and convex polygon segmentation. The landing foot EE height is then enforced by the terrain height, while the x and y dimensions are constrained by the heuristically selected terrain polygon similar to \cite{grandia2023perceptive}.
 
@@ -120,7 +123,7 @@ Obstacle avoidance is incorporated via a control barrier function (CBF) formulat
 Similarly, a terrain-aware constraint is imposed on the payload to prevent collisions during terrain transitions, such as moving from flat ground to a slope.
 
 \subsubsection{Inter-System --- \textbf{Arm Kinematics}}
-The arm kinematics constraint bounds the relative pose between each robot base and the grasping handle (arm EE), ensuring the grasp remains within a feasible workspace. Therefore, similar to the previous technique for decomposing the system dynamics, we use the state from previous ADMM iteration. Note that due to the fixed state assumption, we need to add additional constraint for the payload with fixed robot states, maintaining the constraint feasibility from both payload and robots sides. 
+The arm kinematics constraint bounds the relative pose between each robot base and the grasping handle (arm EE), ensuring the grasp remains within a feasible workspace. Therefore, similar to the previous method for decomposing the system dynamics, we use the state from the previous ADMM iteration. Note that due to the fixed state assumption, we add additional constraints for the payload with fixed robot states, maintaining the constraint feasibility from both payload and robots. 
 \begin{equation}
 \begin{aligned}
     & \v r_0 [k], \vg \theta_0[k] \in \mathcal{R}_h(\v r_i^{m}[k],\vg \theta_{i}^{m}[k], \v p_h^{\text{max}})\\ 
@@ -144,7 +147,7 @@ The formation constraint keeps each robot’s center of mass near its nominal of
 % This couples payload and robot states and is enforced as a soft constraint; 
 
 \subsection{Cost Function}
-The cost function is directly defined for each rigid body separately, consisting of simple tracking costs and regularization terms governed by diagonal matrices $\v Q$ and $\v R$. 
+The cost function is directly defined for each subsystem separately, consisting of simple tracking costs and regularization terms governed by diagonal matrices $\v Q$ and $\v R$. 
 \begin{equation}
     l_k^{i} = \delta \vg \phi_Q[k]^T\mathbf{Q}\hspace{2pt}\delta \vg \phi_Q[k] + \vg \phi_R[k]^{T}\mathbf{R}\vg \phi_R[k]
 \end{equation}
@@ -178,7 +181,7 @@ where $\v A_i$ and $\v B_i$ denote the vectorized forms of the consensus constra
 %         & \sum_{i = 1}^{R} \frac{\rho}{2}\|\v A_i \v u_i+\v B_i \v u_0 + \v w_i\|^2
 %     \end{aligned}
 % \end{equation}
-Then based on ADMM, the original problem is divided into $N+1$ subproblems which are also known as sub-blocks. Each sub-block only requires part of the aforementioned AL as the local cost function with the payload sub-block being:
+Then, based on ADMM, the original problem is divided into $N+1$ subproblems which are also known as sub-blocks. Each sub-block only requires part of the aforementioned AL as the local cost function with the payload sub-block being:
 \begin{equation}
     \begin{aligned}
         \mathcal{L}_0(\cdot) = & \sum_{k = 0}^{N-1}l_k^0(\v x_{0}[k], \v u_{0}[k]) + l_N^0(\v x_{0}[N]) + \\
@@ -211,30 +214,32 @@ Then as shown in Fig.~\ref{fig:system_diagram}, for each ADMM iteration $m$, the
         &\v w_{i}^{m+1}=\v w_{i}^{m}+\v A_i \v u_i^{m+1}+\v B_i \v u_0^{m+1}
     \end{align}
 \end{subequations}
-where for each subproblem, due to the nonlinear dynamics, we employ an Riccati-like Sequential Quadratic Programming (SQP) solver to efficiently get the reduced-size subproblem solutions. All inequality constraints are penalized with a relaxed log barrier. 
+where for each subproblem, due to the nonlinear dynamics, we employ a Riccati-like Sequential Quadratic Programming (SQP) solver to efficiently get the reduced-size subproblem solutions. All inequality constraints are penalized with a relaxed log barrier. 
 % We adopt standard \textit{consensus} ADMM rather than the \textit{Jacobi} variant, as it provides better convergence while the payload subproblem remains inexpensive to solve.
-Lastly, based on the consensus constraints defined in (\ref{eq:consensus_constraint}), we define the vectorized residual as $\v s = [\v A_1 \v u_1 + \v B_i \v u_0, \dots, \v A_N \v u_N + \v B_N \v u_0]^{\top}$. Similar to \cite{zhou2020accelerated}, the stopping criteria is based on a time-scaled sum squared error with a tolerance $\epsilon$: $dt \cdot \sum_k \||\v s[k]\||_2 < \epsilon$.
+Lastly, based on the consensus constraints defined in (\ref{eq:consensus_constraint}), we define the vectorized residual as $\v s = [\v A_1 \v u_1 + \v B_1 \v u_0, \dots, \v A_R \v u_R + \v B_R \v u_0]^{\top}$. Similar to \cite{zhou2020accelerated}, the stopping criteria is based on a time-scaled sum squared error with a tolerance $\epsilon$: $dt \cdot \sum_k \|\v s[k]\|_2 < \epsilon$.
 
 \begin{figure*}[htb]
     \centering
     \includegraphics[width=\linewidth]{figures/perceptive_terrain.png}
-    \vspace{-5mm}
-    \caption{Illustration of diverse terrain navigation scenarios used to evaluate perceptive locomotion. \textbf{A.1--A.2}: Two robots with cargo across stepped terrain of uniform surface height, shown in rendered and RViz views. \textbf{B.1--B.2}: Two quadruped robots with cargo on a sloped surface, shown in rendered and RViz views. \textbf{C}: Two robots redirecting a box through a 90-degree turn in a narrow passage. \textbf{D}: Two robots with cargo following a circular path on an elevated annular platform. \textbf{E}: Three robots with cargo across stepped terrain of uniform surface height. \textbf{F}: Four robots with cargo on a sloped surface. \textbf{G}: Two robots with cargo performing obstacle avoidance on flat terrain.}
+    \vspace{-6mm}
+    \caption{Illustration of diverse terrain navigation scenarios used to evaluate collaborative loco-manipulation. \textbf{A.1--A.2}: Two robots carry a cargo across stepped terrain of uniform surface height, shown in rendered and RViz views. \textbf{B.1--B.2}: Two robots carry a cargo on a sloped surface, shown in rendered and RViz views. \textbf{C}: Two robots carry a cargo through a 90-degree turn in a narrow passage. \textbf{D}: Two robots carry a cargo following a circular path on an elevated annular platform. \textbf{E}: Four robots carry a foldable stretcher across stepped terrain of uniform surface height. \textbf{F}: Three robots carry a wooden table on a sloped surface. \textbf{G}: Two robots carry a cargo performing obstacle avoidance on flat terrain.}
     \label{fig:perceptive_terrain_scenarios}
     \vspace{-5mm}
 \end{figure*}
 
 
 \section{Real-Time Planning and Control}
-\subsection{Distributed Model Predictive Control}
-The distributed MPC framework involves iterative replanning based on Eq.~(\ref{eq:updates}). To accelerate convergence, we employ two warm-start strategies. First, within a single MPC solve, the solution of each subproblem from the previous ADMM iteration is used to initialize the corresponding subproblem in the current iteration. Second, across successive MPC time windows, the primal and dual solutions from the previous window are used to initialize the first ADMM iteration of the new window. For the initial time window, the dual variables are initialized to zero, and the reference trajectory is used as the primal initial guess.
+\subsection{Warm-Start for Distributed MPC}
+The distributed MPC framework involves iterative replanning based on Eq.~(\ref{eq:updates}). To accelerate convergence, we employ two warm-start strategies. First, within a single MPC solve, the solution of each subproblem from the previous ADMM iteration is used to initialize the corresponding subproblem in the current iteration. Second, across successive MPC solves, the primal and dual solutions from the previous window are used to initialize the first ADMM iteration of the new window. For the initial time window, the dual variables are initialized to zero, and the reference trajectory is used as the primal initial guess.
 
 \subsection{Wrench-Aware Whole-Body Control}
 % The wrench-aware WBC executes the planned motion and interaction wrenches at a higher control rate (500 Hz), closing the loop between the distributed MPC and the robot actuators. It takes as references the optimized base, foot, arm end-effector pose, and the 6-DoF manipulation wrench from the distributed MPC planner. The WBC solves for generalized accelerations, foot contact forces, arm end-effector wrench, and joint torques, subject to the equations of motion and contact/friction constraints.
 
-The wrench-aware WBC executes the planned motion and interaction wrenches at 500 Hz, closing the loop between the distributed MPC and the actuators. It tracks the optimized base, foot, and arm end-effector poses together with the desired manipulation wrench, solving for generalized accelerations, contact forces, and joint torques. Inverse kinematics (IK) provides joint position and velocity references for both legs and arm, and the final torque command combines WBC feedforward torques with low-gain PD feedback to realize the desired motion and interaction wrenches while compensating residual tracking errors.
+The wrench-aware WBC executes the planned motion and interaction wrenches at 500 Hz.
+%, closing the loop between the distributed MPC and the actuators. 
+It tracks the optimized base, foot, and arm EE poses together with the desired manipulation wrench, solving for generalized accelerations, contact forces, and joint torques. Inverse kinematics (IK) provides joint position and velocity references for both legs and arm, and the final torque command combines WBC feedforward torques with low-gain PD feedback to realize the desired motion and interaction wrenches while compensating residual tracking errors.
 
-A central design choice is the task hierarchy. We adopt a hierarchical quadratic program (QP) with two priority levels rather than a single weighted QP, so that safety and dynamic consistency are never traded off for tracking. In the highest priority, we enforce: the floating-base equations of motion, joint torque limits, friction cones for feet and arm contact, no-contact motion for swing legs, the arm contact wrench tracking task, and the leg contact force tracking task given the MPC desired states. In the second level, we handle base acceleration tracking, swing-leg task, arm end-effector pose tracking, and torque/joint-acceleration regularization. This structure guarantees strict wrench tracking while utilizing remaining redundancy for pose objectives.
+A central design choice is the task hierarchy. We adopt a hierarchical quadratic program (QP) \cite{bellicoso2019alma} with three priority levels, so that safety and dynamic consistency are never traded off for tracking. In the highest priority, we enforce: the floating-base equations of motion, joint torque limits, friction cones for feet and arm contact, no-contact motion for swing legs, and the arm contact wrench tracking task given the MPC desired states. In the second level, we handle base pose, swing-leg task, and arm EE pose tracking, while in the lowest level, we track the leg contact force and regularize torque/joint-acceleration. Unlike \cite{bellicoso2019alma}, we elevate wrench tracking to the highest priority in our dynamic manipulation task, thereby guaranteeing strict wrench consistency while exploiting the remaining redundancy for pose objectives.
 
 % In the feedback path, inverse kinematics (IK) supplies desired joint positions and velocities for both legs and the arm: leg IK (analytical) maps desired foot poses from the centroidal plan to leg joint references $q_{\mathrm{ref}}^{\mathrm{leg}}$, $\dot{q}_{\mathrm{ref}}^{\mathrm{leg}} \in \mathbb{R}^{12}$, and arm IK maps the desired end-effector pose to arm joint references $q_{\mathrm{ref}}^{\mathrm{arm}}$, $\dot{q}_{\mathrm{ref}}^{\mathrm{arm}} \in \mathbb{R}^6$. Stacking leg and arm quantities, let $q$, $\dot{q}$, $q_{\mathrm{ref}}$, $\dot{q}_{\mathrm{ref}} \in \mathbb{R}^n$ with $n = 18$ denote measured and reference joint positions and velocities, and let $\tau_{\mathrm{ff}} \in \mathbb{R}^n$ be the feedforward torque from the WBC. The final commanded torque for legs and arm is
 % \begin{equation}

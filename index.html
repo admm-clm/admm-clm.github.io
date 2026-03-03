@@ -124,7 +124,10 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <img src="static/Collaborative_Loco_Manipulation/figures/perceptive_terrain.png" alt="Scenario overview" style="width: 100%; border-radius: 8px;">
-      <p class="subtitle is-6 has-text-centered" style="margin-top: 10px; color: #555;">Evaluation scenarios: Gap (A), Slope (B), Narrow Turn (C), Annular (D), 3-robot Gap (E), 4-robot Slope (F), Obstacle avoidance (G).</p>
+      <p class="subtitle is-6 has-text-centered" style="margin-top: 10px; color: #555;">
+        Rough-terrain scenarios with a shared cargo box: Gap (A), Slope (B), Narrow Turn (C), and Annular platform (D);
+        multi-robot scalability with three-robot Gap and four-robot Slope using different payloads (E–F); and the obstacle-avoidance setup (G).
+      </p>
     </div>
   </div>
 </section>
@@ -138,7 +141,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints on interaction wrenches. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
+            Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods, e.g., holistic trajectory optimization, capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions, leading to conservative behavior. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Extensive simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
           </p>
         </div>
       </div>
@@ -247,20 +250,32 @@
 
         <h3 class="title is-5">Scalability — Real-time performance independent of team size</h3>
         <p class="content has-text-justified">
-          Our ADMM decomposition preserves dynamic coupling (consensus on interaction wrenches) while yielding parallel robot-level subproblems. Centralized MPC solves one large OCP that grows with robot count; we validate on flat and Gap–Slope terrain with 2–4 robots.
+          Our ADMM decomposition preserves dynamic coupling (consensus on interaction wrenches) while yielding parallel robot-level subproblems. Centralized MPC solves one large OCP that grows with robot count; we validate on flat and Gap–Slope terrain with 2–4 robots and diverse payloads.
         </p>
         <div class="columns is-multiline" style="margin-bottom: 16px;">
           <div class="column is-half">
             <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
               <source src="static/videos/three_robots_gap.mp4" type="video/mp4">
             </video>
-            <p class="subtitle is-6" style="margin-top: 6px;">Three robots — stepped terrain (Gap)</p>
+            <p class="subtitle is-6" style="margin-top: 6px;">Three robots — Gap, cargo box</p>
           </div>
           <div class="column is-half">
             <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
               <source src="static/videos/four_robots_slope.mp4" type="video/mp4">
             </video>
-            <p class="subtitle is-6" style="margin-top: 6px;">Four robots — sloped terrain</p>
+            <p class="subtitle is-6" style="margin-top: 6px;">Four robots — Slope, cargo box</p>
+          </div>
+          <div class="column is-half">
+            <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px; margin-top: 12px;">
+              <source src="static/videos/three_robots_slope_table.mp4" type="video/mp4">
+            </video>
+            <p class="subtitle is-6" style="margin-top: 6px;">Three robots — Slope, table payload</p>
+          </div>
+          <div class="column is-half">
+            <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px; margin-top: 12px;">
+              <source src="static/videos/four_robots_gap_folding_stretcher.mp4" type="video/mp4">
+            </video>
+            <p class="subtitle is-6" style="margin-top: 6px;">Four robots — Gap, folding stretcher</p>
           </div>
         </div>
         <img src="static/Collaborative_Loco_Manipulation/figures/scalability_analysis.png" alt="Scalability analysis" style="width: 100%; border-radius: 8px;">
