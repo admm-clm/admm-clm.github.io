@@ -1,0 +1,140 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{farivarnejad2022multirobot}
+\citation{rigo2025hierarchical,yang2022}
+\citation{devincenti2023,sun2025agile}
+\citation{boyd2011distributed}
+\providecommand \oddpage@label [2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:introduction}{{I}{1}{Introduction}{section.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces ADMM-based distributed MPC framework. The robot subproblems are solved in parallel with consensus on interaction wrenches, and the resulting trajectories are executed by local WBC.}}{1}{figure.1}\protected@file@percent }
+\newlabel{fig:system_diagram}{{1}{1}{ADMM-based distributed MPC framework. The robot subproblems are solved in parallel with consensus on interaction wrenches, and the resulting trajectories are executed by local WBC}{figure.1}{}}
+\citation{bellicoso2019alma}
+\citation{nikou2017nonlinear,sun2025agile}
+\citation{khatib1996coordination,verginis2018communication,culbertson2018decentralized}
+\citation{farivarnejad2022multirobot,sugar2002control}
+\citation{pandit2024,kim2023,yang2022}
+\citation{devincenti2023}
+\citation{rigo2025hierarchical}
+\citation{turrisi2024}
+\citation{pandit2025multi,an2025collaborative}
+\citation{feng2025learning,sombolestan2024,ji2021reinforcement}
+\citation{zhao2024survey}
+\citation{boyd2011distributed}
+\citation{saravanos2023distributed,tajbakhsh2025asynchronous}
+\citation{shorinwa2020scalable}
+\citation{shorinwa_disco_2024}
+\citation{boyd2011distributed}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{section.2}\protected@file@percent }
+\newlabel{sec:related_work}{{II}{2}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {II-A}Collaborative Transportation and Manipulation}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {II-B}ADMM for Multi-Robot Distributed Control}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Preliminaries}{2}{section.3}\protected@file@percent }
+\newlabel{sec:preliminaries}{{III}{2}{Preliminaries}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-A}Consensus ADMM}{2}{subsection.3.1}\protected@file@percent }
+\newlabel{eq:consensusADMM}{{1}{2}{Consensus ADMM}{equation.3.1}{}}
+\newlabel{eq:consensus-updates}{{2}{3}{Consensus ADMM}{equation.3.2}{}}
+\newlabel{eq:x-update}{{2a}{3}{Consensus ADMM}{equation.3.2a}{}}
+\newlabel{eq:z-update}{{2b}{3}{Consensus ADMM}{equation.3.2b}{}}
+\newlabel{eq:dual-update}{{2c}{3}{Consensus ADMM}{equation.3.2c}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-B}Centralized Optimization Formulation}{3}{subsection.3.2}\protected@file@percent }
+\newlabel{eq:raw_payload_dynamics}{{6}{3}{Centralized Optimization Formulation}{equation.3.6}{}}
+\newlabel{eq:raw_robot_dynamics}{{7}{3}{Centralized Optimization Formulation}{equation.3.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Distributed Optimization}{3}{section.4}\protected@file@percent }
+\newlabel{sec:approach}{{IV}{3}{Distributed Optimization}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV-A}Decomposed System Dynamics}{3}{subsection.4.1}\protected@file@percent }
+\citation{shorinwa_disco_2024}
+\citation{amatucci2022}
+\citation{grandia2023perceptive}
+\newlabel{eq:consensus_constraint}{{9}{4}{Decomposed System Dynamics}{equation.4.9}{}}
+\newlabel{remark:consensus}{{1}{4}{}{remark.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV-B}Constraints}{4}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.1}Independent --- \textbf  {Frictional and Contact}}{4}{subsubsection.4.2.1}\protected@file@percent }
+\newlabel{eq:mani_force_non_zero}{{11a}{4}{Independent --- \textbf {Frictional and Contact}}{equation.4.11a}{}}
+\newlabel{eq:wrench_cone}{{11b}{4}{Independent --- \textbf {Frictional and Contact}}{equation.4.11b}{}}
+\newlabel{eq:force_non_zero}{{11c}{4}{Independent --- \textbf {Frictional and Contact}}{equation.4.11c}{}}
+\newlabel{eq:force_friction_cone}{{11d}{4}{Independent --- \textbf {Frictional and Contact}}{equation.4.11d}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.2}Independent --- \textbf  {Foot Kinematics}}{4}{subsubsection.4.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.3}Independent --- \textbf  {Foot Placement}}{4}{subsubsection.4.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.4}Independent --- \textbf  {Collision Avoidance}}{4}{subsubsection.4.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.5}Inter-System --- \textbf  {Arm Kinematics}}{4}{subsubsection.4.2.5}\protected@file@percent }
+\newlabel{eq:arm_rom}{{12}{4}{Inter-System --- \textbf {Arm Kinematics}}{equation.4.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {IV-B.6}Inter-System --- \textbf  {Formation}}{4}{subsubsection.4.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV-C}Cost Function}{4}{subsection.4.3}\protected@file@percent }
+\citation{zhou2020accelerated}
+\citation{bellicoso2019alma}
+\citation{bellicoso2019alma}
+\citation{OCS2}
+\citation{miki2022elevation}
+\citation{devincenti2023}
+\@writefile{toc}{\contentsline {subsection}{\numberline {IV-D}Distributed Update}{5}{subsection.4.4}\protected@file@percent }
+\newlabel{eq:payload_dynamics}{{13b}{5}{Distributed Update}{equation.4.13b}{}}
+\newlabel{eq:payload_constraint}{{13c}{5}{Distributed Update}{equation.4.13c}{}}
+\newlabel{eq:robot_dynamics}{{13d}{5}{Distributed Update}{equation.4.13d}{}}
+\newlabel{eq:robot_eq_constraint}{{13e}{5}{Distributed Update}{equation.4.13e}{}}
+\newlabel{eq:robot_ineq_constraint}{{13f}{5}{Distributed Update}{equation.4.13f}{}}
+\newlabel{eq:consensus_constraint_vecterized}{{13g}{5}{Distributed Update}{equation.4.13g}{}}
+\newlabel{eq:updates}{{16}{5}{Distributed Update}{equation.4.16}{}}
+\newlabel{eq:primal-a}{{16a}{5}{Distributed Update}{equation.4.16a}{}}
+\newlabel{eq:primal-b-i}{{16b}{5}{Distributed Update}{equation.4.16b}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Real-Time Planning and Control}{5}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {V-A}Warm-Start for Distributed MPC}{5}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {V-B}Wrench-Aware Whole-Body Control}{5}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Results}{5}{section.6}\protected@file@percent }
+\newlabel{sec:experiment}{{VI}{5}{Results}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VI-A}Experimental Setup}{5}{subsection.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Illustration of diverse terrain navigation scenarios used to evaluate collaborative loco-manipulation. \textbf  {A.1--A.2}: Two robots carry a cargo across stepped terrain of uniform surface height, shown in rendered and RViz views. \textbf  {B.1--B.2}: Two robots carry a cargo on a sloped surface, shown in rendered and RViz views. \textbf  {C}: Two robots carry a cargo through a 90-degree turn in a narrow passage. \textbf  {D}: Two robots carry a cargo following a circular path on an elevated annular platform. \textbf  {E}: Four robots carry a foldable stretcher across stepped terrain of uniform surface height. \textbf  {F}: Three robots carry a wooden table on a sloped surface. \textbf  {G}: Two robots carry a cargo performing obstacle avoidance on flat terrain.}}{6}{figure.2}\protected@file@percent }
+\newlabel{fig:perceptive_terrain_scenarios}{{2}{6}{Illustration of diverse terrain navigation scenarios used to evaluate collaborative loco-manipulation. \textbf {A.1--A.2}: Two robots carry a cargo across stepped terrain of uniform surface height, shown in rendered and RViz views. \textbf {B.1--B.2}: Two robots carry a cargo on a sloped surface, shown in rendered and RViz views. \textbf {C}: Two robots carry a cargo through a 90-degree turn in a narrow passage. \textbf {D}: Two robots carry a cargo following a circular path on an elevated annular platform. \textbf {E}: Four robots carry a foldable stretcher across stepped terrain of uniform surface height. \textbf {F}: Three robots carry a wooden table on a sloped surface. \textbf {G}: Two robots carry a cargo performing obstacle avoidance on flat terrain}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VI-B}Rough Terrain}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces CPU time scalability comparison between distributed and centralized MPC for 2–4 robots in flat and Gap-Slope terrain scenarios. }}{6}{figure.3}\protected@file@percent }
+\newlabel{fig:scalability_analysis}{{3}{6}{CPU time scalability comparison between distributed and centralized MPC for 2–4 robots in flat and Gap-Slope terrain scenarios}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VI-C}Scalability and Convergence Analysis}{6}{subsection.6.3}\protected@file@percent }
+\newlabel{subsec:scalability_convergence}{{VI-C}{6}{Scalability and Convergence Analysis}{subsection.6.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Residual convergence (top-left, top-right, and bottom-left) and computation time (bottom-right) for different ADMM-SQP iterations.}}{7}{figure.4}\protected@file@percent }
+\newlabel{fig:convergence_analysis}{{4}{7}{Residual convergence (top-left, top-right, and bottom-left) and computation time (bottom-right) for different ADMM-SQP iterations}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VI-D}Obstacle Avoidance}{7}{subsection.6.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Obstacle avoidance and pose tracking performance. }}{7}{figure.5}\protected@file@percent }
+\newlabel{fig:obstacle_avoidance_overview}{{5}{7}{Obstacle avoidance and pose tracking performance}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VI-E}Robustness and Ablation Study}{7}{subsection.6.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Cargo pose tracking errors under mass and inertia variations. }}{7}{figure.6}\protected@file@percent }
+\newlabel{fig:robustness_analysis}{{6}{7}{Cargo pose tracking errors under mass and inertia variations}{figure.6}{}}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{farivarnejad2022multirobot}{1}
+\bibcite{rigo2025hierarchical}{2}
+\bibcite{yang2022}{3}
+\bibcite{devincenti2023}{4}
+\bibcite{sun2025agile}{5}
+\bibcite{boyd2011distributed}{6}
+\bibcite{bellicoso2019alma}{7}
+\bibcite{nikou2017nonlinear}{8}
+\bibcite{khatib1996coordination}{9}
+\bibcite{verginis2018communication}{10}
+\bibcite{culbertson2018decentralized}{11}
+\bibcite{sugar2002control}{12}
+\bibcite{pandit2024}{13}
+\bibcite{kim2023}{14}
+\bibcite{turrisi2024}{15}
+\bibcite{pandit2025multi}{16}
+\bibcite{an2025collaborative}{17}
+\bibcite{feng2025learning}{18}
+\bibcite{sombolestan2024}{19}
+\bibcite{ji2021reinforcement}{20}
+\bibcite{zhao2024survey}{21}
+\bibcite{saravanos2023distributed}{22}
+\bibcite{tajbakhsh2025asynchronous}{23}
+\bibcite{shorinwa2020scalable}{24}
+\bibcite{shorinwa_disco_2024}{25}
+\bibcite{amatucci2022}{26}
+\bibcite{grandia2023perceptive}{27}
+\bibcite{zhou2020accelerated}{28}
+\bibcite{OCS2}{29}
+\bibcite{miki2022elevation}{30}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Comparison between force-only tracking and full wrench tracking. }}{8}{figure.7}\protected@file@percent }
+\newlabel{fig:wrench_ablation}{{7}{8}{Comparison between force-only tracking and full wrench tracking}{figure.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{8}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{VII}{8}{Conclusion}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{References}{8}{section*.1}\protected@file@percent }
+\gdef \@abspage@last{8}

@@ -133,14 +133,22 @@
 </section>
 <!-- End scenario overview -->
 
-<!-- Paper abstract -->
+<!-- Paper abstract & video (BeyondMimic-style layout) -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
+    <div class="columns">
+      <div class="column is-half">
+        <h2 class="title is-3">Video</h2>
+        <div class="video-abstract-card" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #ddd;">
+          <video controls playsinline poster="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: #000;">
+            <source src="static/videos/ACLM_IROS_2026_w_subtitle_sm.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="column is-half">
         <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
+        <div class="content" style="font-size: 0.8rem; line-height: 1.45;">
+          <p class="has-text-justified" style="margin: 0;">
             Collaborative transportation of heavy payloads via loco-manipulation is a challenging yet essential capability for legged robots operating in complex, unstructured environments. Centralized planning methods, e.g., holistic trajectory optimization, capture dynamic coupling among robots and payloads but scale poorly with system size, limiting real-time applicability. In contrast, hierarchical and fully decentralized approaches often neglect force and dynamic interactions, leading to conservative behavior. This study proposes an Alternating Direction Method of Multipliers (ADMM)-based distributed model predictive control framework for collaborative loco-manipulation with a team of quadruped robots with manipulators. By exploiting the payload-induced coupling structure, the global optimal control problem is decomposed into parallel individual-robot-level subproblems with consensus constraints. The distributed planner operates in a receding-horizon fashion and achieves fast convergence, requiring only a few ADMM iterations per planning cycle. A wrench-aware whole-body controller executes the planned trajectories, tracking both motion and interaction wrenches. Extensive simulations with up to four robots demonstrate scalability, real-time performance, and robustness to model uncertainty.
           </p>
         </div>
@@ -157,7 +165,7 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Approach Summary</h2>
         <div class="video-container" style="margin-bottom: 24px;">
-          <img src="static/Collaborative_Loco_Manipulation/figures/flowchart.png" alt="ADMM distributed MPC framework" style="width: 100%; max-width: 560px; border-radius: 8px;">
+          <img src="static/Collaborative_Loco_Manipulation/figures/flowchart_1.png" alt="ADMM distributed MPC framework" style="width: 100%; max-width: 560px; border-radius: 8px;">
           <p class="subtitle is-6" style="margin-top: 12px; color: #555;">System overview: robot subproblems are solved in parallel with consensus on interaction wrenches; trajectories are executed by local wrench-aware WBC.</p>
         </div>
         <div class="content has-text-justified">
@@ -222,7 +230,7 @@
           <div class="columns">
             <div class="column">
               <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
-                <source src="static/videos/admm_gazebo_obstacle_render.mp4" type="video/mp4">
+                <source src="static/videos/slide5_obstacle_avoidance (online-video-cutter.com).mp4" type="video/mp4">
               </video>
               <p class="subtitle is-6" style="margin-top: 8px;">Two robots with cargo avoiding box obstacles (Gazebo + Blender)</p>
             </div>
@@ -325,7 +333,21 @@
           <p class="has-text-justified">
             We optimize and track the full 6-DoF wrench at the grasps. Ablating torque (force-only tracking) tests whether this is necessary.
           </p>
-          <img src="static/Collaborative_Loco_Manipulation/figures/wrench_ablation.png" alt="Force-only vs full wrench tracking" style="width: 100%; border-radius: 8px; margin-top: 12px;">
+          <div class="columns is-multiline" style="margin-top: 12px;">
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/force_track.mp4" type="video/mp4">
+              </video>
+              <p class="subtitle is-6" style="margin-top: 6px;">Force-only tracking — angular error grows, instability</p>
+            </div>
+            <div class="column is-half">
+              <video poster="" autoplay controls muted loop style="width: 100%; border-radius: 8px;">
+                <source src="static/videos/wrench_track.mp4" type="video/mp4">
+              </video>
+              <p class="subtitle is-6" style="margin-top: 6px;">Full wrench tracking — stable, accurate transport</p>
+            </div>
+          </div>
+          <img src="static/Collaborative_Loco_Manipulation/figures/wrench_ablation.png" alt="Force-only vs full wrench tracking" style="width: 100%; border-radius: 8px; margin-top: 16px;">
           <p class="subtitle is-6" style="margin-top: 8px; color: #555;">Force-only vs full wrench tracking: angular error and stability.</p>
           <p class="has-text-justified" style="margin-top: 12px;">
             Force-only tracking leads to growing angular error and instability. Enabling torque—especially about the robot–cargo alignment axis—restores stability; vertical torque stays tightly constrained to avoid slip. The wrench-aware WBC is thus essential for stable, accurate collaborative transport, not an optional add-on.
